@@ -1,11 +1,11 @@
-FROM balenalib/generic-amd64-debian-node:20-bullseye-run
+FROM balenalib/raspberrypi3-node:20-run
 
 WORKDIR /usr/src/app
 
-COPY package*.json ./
-RUN npm install
+COPY package.json package.json
 
-COPY . .
+RUN JOBS=MAX npm install --production
+COPY . ./
 
 EXPOSE 3000
 CMD ["npm", "start"]
