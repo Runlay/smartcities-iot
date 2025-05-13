@@ -1,11 +1,13 @@
-FROM balenalib/raspberrypi3-node:20-run
+FROM node:22.15-bullseye-slim
 
 WORKDIR /usr/src/app
 
-COPY package.json package.json
+COPY package.json ./package.json
 
-RUN JOBS=MAX npm install --production
+RUN npm install
 COPY . ./
+
+RUN npm run build
 
 EXPOSE 3000
 CMD ["npm", "start"]
