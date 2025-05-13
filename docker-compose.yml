@@ -1,7 +1,32 @@
 version: "2"
+
+volumes:
+  redis_data:
+
 services:
     frontend:
         build: ./frontend
         restart: always
-        ports:
+        ports: 
             - "80:3000"
+
+    redis:
+        build: database/
+        image: redis:7
+        restart: always
+        ports:
+        - "6379:6379"
+        volumes:
+        - redis_data:/data
+        environment:
+        - ALLOW_EMPTY_PASSWORD=yes
+        expose:
+            - 6379
+
+    # backend:
+    #     build: ./backend
+    #     depends_on:
+    #     - redis
+    #     environment:
+    #     - REDIS_HOST=redis
+    #     - REDIS_PORT=6379
