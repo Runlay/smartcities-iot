@@ -23,10 +23,16 @@ services:
         expose:
             - 6379
 
-    # backend:
-    #     build: ./backend
-    #     depends_on:
-    #     - redis
-    #     environment:
-    #     - REDIS_HOST=redis
-    #     - REDIS_PORT=6379
+    backend:
+        build: ./backend
+        restart: always
+        depends_on:
+        - redis
+        environment:
+        - REDIS_HOST=redis
+        - REDIS_PORT=6379
+        ports:
+            - "4000:4000"
+        expose:
+            - 4000
+
