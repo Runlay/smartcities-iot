@@ -4,35 +4,35 @@ volumes:
   redis_data:
 
 services:
-    frontend:
-        build: ./frontend
-        restart: always
-        ports: 
-            - "80:3000"
+  frontend:
+    build:
+      context: ./frontend
+    restart: always
+    ports:
+      - "80:3000"
 
-    redis:
-        build: database/
-        image: redis:7
-        restart: always
-        ports:
-        - "6379:6379"
-        volumes:
-        - redis_data:/data
-        environment:
-        - ALLOW_EMPTY_PASSWORD=yes
-        expose:
-            - 6379
+  redis:
+    build: database/
+    image: redis:7
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    expose:
+      - 6379
 
-    backend:
-        build: ./backend
-        restart: always
-        depends_on:
-        - redis
-        environment:
-        - REDIS_HOST=redis
-        - REDIS_PORT=6379
-        ports:
-            - "4000:4000"
-        expose:
-            - 4000
-
+  backend:
+    build: ./backend
+    restart: always
+    depends_on:
+      - redis
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    ports:
+      - "4000:4000"
+    expose:
+      - 4000
