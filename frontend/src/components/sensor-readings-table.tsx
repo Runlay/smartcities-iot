@@ -40,7 +40,14 @@ const SensorReadingsTable = () => {
           <TableHead>Value</TableHead>
         </TableRow>
       </TableHeader>
-      <TableBody>{sensorReadingRows}</TableBody>
+      <TableBody>
+        <TableRow>
+          <TableCell>2025-05-17T22:09:30.371Z</TableCell>
+          <TableCell>Temperature</TableCell>
+          <TableCell>21.5°C</TableCell>
+        </TableRow>
+        {sensorReadingRows}
+      </TableBody>
     </Table>
   );
 };

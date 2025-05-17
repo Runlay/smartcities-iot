@@ -1,22 +1,15 @@
-import { ThemeProvider } from './components/theme-provider';
-
-import { ModeToggle } from './components/mode-toggle';
-
-import SensorReadingsTable from './components/sensor-readings-table';
+import { Routes, Route } from 'react-router';
+import Overview from './pages/Overview';
+import EnvironmentState from './pages/EnvironmentState';
+import PlanExecution from './pages/PlanExecution';
 
 const App = () => {
   return (
-    <ThemeProvider>
-      <header className='container mx-auto flex items-center justify-between px-4 py-6'>
-        <img src='/favicon.svg' alt='Warehouse Logo' />
-
-        <ModeToggle />
-      </header>
-
-      <main className='container mx-auto mt-8 px-4'>
-        <SensorReadingsTable />
-      </main>
-    </ThemeProvider>
+    <Routes>
+      <Route path='/' element={<Overview />} />
+      <Route path='/environment-state' element={<EnvironmentState />} />
+      <Route path='/plan-execution' element={<PlanExecution />} />
+    </Routes>
   );
 };
 
