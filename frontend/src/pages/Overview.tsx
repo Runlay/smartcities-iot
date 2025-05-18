@@ -14,7 +14,7 @@ const Overview = () => {
           <Alert className='mt-2 mb-10'>
             <Info className='h-4 w-4' />
             <AlertDescription>
-              This page provides live monitoring of the sensor readings.
+              This page provides live monitoring of the raw sensor readings.
             </AlertDescription>
           </Alert>
 
