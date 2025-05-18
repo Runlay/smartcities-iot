@@ -1,7 +1,7 @@
 import type { SensorReading } from '@/types/types';
 import mqtt from 'mqtt';
 
-const MQTT_BROKER_URL = 'ws://localhost:9001'; // TODO: adjust URL
+const MQTT_BROKER_URL = 'ws://localhost:15675/ws';
 const MQTT_TOPIC = 'sensor';
 
 let mqttClient: mqtt.MqttClient | null = null;
@@ -14,7 +14,11 @@ export const connectMQTT = (
   }
 
   // client has disable auto reconnect
-  mqttClient = mqtt.connect(MQTT_BROKER_URL, { reconnectPeriod: 0 });
+  mqttClient = mqtt.connect(MQTT_BROKER_URL, {
+    reconnectPeriod: 0,
+    username: 'guest',
+    password: 'guest',
+  });
 
   mqttClient.on('connect', () => {
     console.log(`Connected to MQTT broker on URL ${MQTT_BROKER_URL}`);

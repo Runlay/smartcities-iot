@@ -11,20 +11,17 @@ services:
     restart: always
     ports:
       - '80:3000'
-  
+
   rabbitmq:
-    image: rabbitmq:4-management
+    build: ./messaging
     restart: always
     ports:
-      - "1883:1883"  # MQTT port
-      - "5672:5672"  # AMQP port
-      - "15672:15672"  # Management UI port
-    environment:
-      - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER:-admin}
-      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS:-admin}
+      - '1883:1883' # MQTT TCP port
+      - '15675:15675' # MQTT WebSocket port
+      - '5672:5672' # AMQP port
+      - '15672:15672' # Management UI port
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
-
 
   redis:
     build: database/
@@ -51,6 +48,3 @@ services:
       - '4000:4000'
     expose:
       - 4000
-
-
-
