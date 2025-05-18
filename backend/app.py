@@ -6,6 +6,9 @@ app = FastAPI()
 
 # Connect to Redis
 # Use the service name ('redis') if using Docker Compose, or the appropriate host
+
+
+
 redis_client = redis.StrictRedis(host='redis', port=6379, db=0)
 
 @app.get("/")
