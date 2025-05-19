@@ -2,6 +2,7 @@ import redis
 from fastapi import FastAPI
 import uvicorn
 from mqtt import init_mqtt
+from database_handler import DatabaseHandler
 
 
 
@@ -11,28 +12,28 @@ app = FastAPI()
 # Use the service name ('redis') if using Docker Compose, or the appropriate host
 init_mqtt()
 
-redis_client = redis.StrictRedis(host='redis', port=6379, db=0)
+redis_client = DatabaseHandler()
 
 @app.get("/")
 async def root():
     # Write data into Redis
-    key = "user:1"
-    value = "Alice"
+    key = "sensors:temp"
+    value = "12"
     
     if not redis_client.exists(key):
         redis_client.set(key, value)
 
-    stored_value = redis_client.get(key)
+    else: 
+        redis_client.lpush(key, value)
     
     return {
         "message": "Success",
-        "redis_value": stored_value.decode('utf-8') if stored_value else None
     }
 
 @app.get("/api/history")
 async def get_history():
     # Fetch data from Redis
-    key = "user:1"
+    key = "sensors:temp"
     stored_value = redis_client.get(key)
     
     if stored_value:
