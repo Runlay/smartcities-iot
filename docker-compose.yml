@@ -22,6 +22,11 @@ services:
       - '15672:15672' # Management UI port
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
+    expose:
+      - 1883
+      - 15675
+      - 5672
+      - 15672
 
   redis:
     build: database/
@@ -49,11 +54,11 @@ services:
     expose:
       - 4000
 
-  gateway:
-    build: ./gateway
-    restart: always
-    ports:
-      - '5000:5000'
-    devices:
-      - "/dev/ttyUSB0:/dev/ttyUSB0"
-    privileged: true
+  # gateway:
+  #   build: ./gateway
+  #   restart: always
+  #   ports:
+  #     - '5000:5000'
+  #   devices:
+  #     - "/dev/ttyUSB0:/dev/ttyUSB0"
+  #   privileged: true
