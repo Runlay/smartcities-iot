@@ -26,7 +26,7 @@ const App = () => {
 
   useEffect(() => {
     connectMQTT((newSensorReading) =>
-      setSensorReadings([...sensorReadings, newSensorReading])
+      setSensorReadings((prev) => [...prev, newSensorReading])
     );
 
     return () => {

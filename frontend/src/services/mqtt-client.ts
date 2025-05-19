@@ -2,8 +2,8 @@ import type { SensorReading } from '@/types/types';
 import mqtt from 'mqtt';
 
 const MQTT_BROKER_URL = 'ws://localhost:15675/ws';
-const MQTT_SENSOR_TOPIC = 'sensor';
-const MQTT_ACTUATOR_TOPIC = 'actuator';
+const MQTT_SENSOR_TOPIC = 'sensors/#';
+const MQTT_ACTUATOR_TOPIC = 'actuators/#';
 
 let mqttClient: mqtt.MqttClient | null = null;
 
@@ -43,25 +43,13 @@ export const connectMQTT = (
     console.log(`Received message on topic ${topic}: ${message.toString()}`);
 
     try {
-      const sensorReading = JSON.parse(message.toString()) as SensorReading;
+      const newSensorReading = JSON.parse(message.toString()) as SensorReading;
 
       // append sensor reading to list of sensor readings
-      setSensorReadings(sensorReading);
+      setSensorReadings(newSensorReading);
 
       // update current sensor values
       // TODO: define enum for sensor types -> maybe put into one context and combine with reducer
-      switch (sensorReading.typeId) {
-        case 'de.uni-stuttgart.sciot.group08.aeon/temperature':
-          break;
-        case 'de.uni-stuttgart.sciot.group08.aeon/humidity':
-          break;
-        case 'de.uni-stuttgart.sciot.group08.aeon/motion':
-          break;
-        case 'de.uni-stuttgart.sciot.group08.aeon/pressure':
-          break;
-        default:
-          break;
-      }
 
       // TODO: update current actuator values
     } catch (error) {
