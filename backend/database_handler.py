@@ -23,7 +23,3 @@ class DatabaseHandler():
             self._client.lpush(key, value)
         except:
             print("Error while pushing value to list.")
-            
-    
-    
-    
