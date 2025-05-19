@@ -1,8 +1,8 @@
-import type { currentActuatorValues } from '@/types/types';
+import type { CurrentActuatorValues } from '@/types/types';
 import { createContext } from 'react';
 
 export const CurrentActuatorValuesContext =
-  createContext<currentActuatorValues>({
+  createContext<CurrentActuatorValues>({
     heating: false,
     ventilation: false,
     lighting: false,

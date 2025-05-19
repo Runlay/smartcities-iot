@@ -1,8 +1,4 @@
-import type {
-  CurrentActuatorValues,
-  CurrentSensorValues,
-  SensorReading,
-} from '@/types/types';
+import type { SensorReading } from '@/types/types';
 import mqtt from 'mqtt';
 
 const MQTT_BROKER_URL = 'ws://localhost:15675/ws';
@@ -12,11 +8,7 @@ const MQTT_ACTUATOR_TOPIC = 'actuator';
 let mqttClient: mqtt.MqttClient | null = null;
 
 export const connectMQTT = (
-  setSensorReadings: (sensorReading: SensorReading) => void,
-  setCurrentSensorValues: (currentSensorValues: CurrentSensorValues) => void,
-  setCurrentActuatorValues: (
-    currentActuatorValues: CurrentActuatorValues
-  ) => void
+  setSensorReadings: (sensorReading: SensorReading) => void
 ): void => {
   if (mqttClient) {
     return;
