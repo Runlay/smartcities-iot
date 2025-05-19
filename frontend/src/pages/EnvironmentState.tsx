@@ -2,8 +2,6 @@ import { ThemeProvider } from '@/components/ThemeProvider';
 import Navbar from '@/components/Navbar';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
-import { useContext } from 'react';
-import { CurrentSensorValuesContext } from '@/context/CurrentSensorValuesContext';
 
 import {
   Droplets,
@@ -24,12 +22,8 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { CurrentActuatorValuesContext } from '@/context/CurrentActuatorValuesContext';
 
 const EnvironmentState = () => {
-  const currentSensorValues = useContext(CurrentSensorValuesContext);
-  const currentActuatorValues = useContext(CurrentActuatorValuesContext);
-
   return (
     <ThemeProvider>
       <div className='container mx-auto px-6'>
@@ -58,7 +52,7 @@ const EnvironmentState = () => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className='flex items-center'>
-                  <p>{currentSensorValues.temperature}</p>
+                  <p>0</p>
                 </CardContent>
               </Card>
 
@@ -73,7 +67,7 @@ const EnvironmentState = () => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className='flex items-center'>
-                  <p>{currentSensorValues.humidity}</p>
+                  <p>0</p>
                 </CardContent>
               </Card>
 
@@ -88,11 +82,7 @@ const EnvironmentState = () => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <p>
-                    {currentSensorValues.motion
-                      ? 'Motion Detected'
-                      : 'No Motion Detected'}
-                  </p>
+                  <p>0</p>
                 </CardContent>
               </Card>
 
@@ -107,7 +97,7 @@ const EnvironmentState = () => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <p>{currentSensorValues.pressure}</p>
+                  <p>0</p>
                 </CardContent>
               </Card>
             </div>
@@ -128,7 +118,7 @@ const EnvironmentState = () => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <p>{currentActuatorValues.heating ? 'On' : 'Off'}</p>
+                  <p>0</p>
                 </CardContent>
                 <CardFooter>
                   <Badge>Virtual</Badge>
@@ -146,7 +136,7 @@ const EnvironmentState = () => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <p>{currentActuatorValues.ventilation ? 'On' : 'Off'}</p>
+                  <p>0</p>
                 </CardContent>
                 <CardFooter>
                   <Badge>Virtual</Badge>
@@ -164,7 +154,7 @@ const EnvironmentState = () => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <p>{currentActuatorValues.lighting ? 'On' : 'Off'}</p>
+                  <p>0</p>
                 </CardContent>
                 <CardFooter>
                   <Badge>Physical</Badge>
@@ -182,7 +172,7 @@ const EnvironmentState = () => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <p>{currentActuatorValues.alarm ? 'On' : 'Off'}</p>
+                  <p>0</p>
                 </CardContent>
                 <CardFooter>
                   <Badge>Physical</Badge>

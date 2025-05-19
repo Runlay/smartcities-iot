@@ -1,5 +1,3 @@
-import { useContext } from 'react';
-import { SensorReadingsContext } from '@/context/SensorReadingsContext';
 import {
   Table,
   TableRow,
@@ -7,10 +5,29 @@ import {
   TableHeader,
   TableHead,
   TableBody,
-} from './ui/table';
+} from '@/components/ui/table';
 
 const SensorReadingsTable = () => {
-  const sensorReadings = useContext(SensorReadingsContext);
+  const sensorReadings = [
+    {
+      instanceId: '1',
+      typeId: 'temperature',
+      timestamp: '2023-10-01T12:00:00Z',
+      value: { celsius: 22.5 },
+    },
+    {
+      instanceId: '2',
+      typeId: 'humidity',
+      timestamp: '2023-10-01T12:05:00Z',
+      value: { percentage: 45 },
+    },
+    {
+      instanceId: '3',
+      typeId: 'motion',
+      timestamp: '2023-10-01T12:10:00Z',
+      value: { pascals: 101325 },
+    },
+  ];
 
   return (
     <Table>

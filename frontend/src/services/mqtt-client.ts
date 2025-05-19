@@ -1,4 +1,3 @@
-import type { SensorReading } from '@/types/types';
 import mqtt from 'mqtt';
 
 const MQTT_BROKER_URL = 'ws://localhost:15675/ws';
@@ -7,14 +6,11 @@ const MQTT_ACTUATOR_TOPIC = 'actuators/#';
 
 let mqttClient: mqtt.MqttClient | null = null;
 
-export const connectMQTT = (
-  setSensorReadings: (sensorReading: SensorReading) => void
-): void => {
+export const connectMQTT = (): void => {
   if (mqttClient) {
     return;
   }
 
-  // client has disabled auto reconnect
   // TODO: move credentials to .env
   mqttClient = mqtt.connect(MQTT_BROKER_URL, {
     reconnectPeriod: 0,
@@ -43,15 +39,8 @@ export const connectMQTT = (
     console.log(`Received message on topic ${topic}: ${message.toString()}`);
 
     try {
-      const newSensorReading = JSON.parse(message.toString()) as SensorReading;
-
-      // append sensor reading to list of sensor readings
-      setSensorReadings(newSensorReading);
-
-      // update current sensor values
-      // TODO: define enum for sensor types -> maybe put into one context and combine with reducer
-
-      // TODO: update current actuator values
+      const parsedMessage = JSON.parse(message.toString());
+      console.log(parsedMessage);
     } catch (error) {
       console.error(
         'Failed to parse sensor reading message. The following error occured:',
