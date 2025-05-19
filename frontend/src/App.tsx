@@ -2,14 +2,59 @@ import { Routes, Route } from 'react-router';
 import Overview from './pages/Overview';
 import EnvironmentState from './pages/EnvironmentState';
 import PlanExecution from './pages/PlanExecution';
+import { useEffect, useState } from 'react';
+import { connectMQTT, disconnectMQTT } from './services/mqtt-client';
+import type {
+  CurrentSensorValues,
+  SensorReading,
+  CurrentActuatorValues,
+} from './types/types';
+import { SensorReadingsContext } from './context/SensorReadingsContext';
+import { CurrentSensorValuesContext } from './context/CurrentSensorValuesContext';
+import { CurrentActuatorValuesContext } from './context/CurrentActuatorValuesContext';
 
 const App = () => {
+  const [sensorReadings, setSensorReadings] = useState<SensorReading[]>([]);
+  const [currentSensorValues, setCurrentSensorValues] =
+    useState<CurrentSensorValues>({
+      temperature: 0,
+      humidity: 0,
+      motion: false,
+      pressure: 0,
+    });
+  const [currentActuatorValues, setCurrentActuatorValues] =
+    useState<CurrentActuatorValues>({
+      heating: false,
+      ventilation: false,
+      lighting: false,
+      alarm: false,
+    });
+
+  useEffect(() => {
+    connectMQTT(
+      (newSensorReading) =>
+        setSensorReadings([...sensorReadings, newSensorReading]),
+      setCurrentSensorValues,
+      setCurrentActuatorValues
+    );
+
+    return () => {
+      disconnectMQTT();
+    };
+  }, []);
+
   return (
-    <Routes>
-      <Route path='/' element={<Overview />} />
-      <Route path='/environment-state' element={<EnvironmentState />} />
-      <Route path='/plan-execution' element={<PlanExecution />} />
-    </Routes>
+    <SensorReadingsContext value={sensorReadings}>
+      <CurrentSensorValuesContext value={currentSensorValues}>
+        <CurrentActuatorValuesContext value={currentActuatorValues}>
+          <Routes>
+            <Route path='/' element={<Overview />} />
+            <Route path='/environment-state' element={<EnvironmentState />} />
+            <Route path='/plan-execution' element={<PlanExecution />} />
+          </Routes>
+        </CurrentActuatorValuesContext>
+      </CurrentSensorValuesContext>
+    </SensorReadingsContext>
   );
 };
 

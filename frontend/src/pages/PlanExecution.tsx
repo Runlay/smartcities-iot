@@ -1,5 +1,5 @@
-import { ThemeProvider } from '../components/theme-provider';
-import Navbar from '../components/navbar';
+import { ThemeProvider } from '@/components/ThemeProvider';
+import Navbar from '@/components/Navbar';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Info } from 'lucide-react';
 

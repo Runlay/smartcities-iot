@@ -1,6 +1,6 @@
-import { ThemeProvider } from '../components/theme-provider';
-import SensorReadingsTable from '../components/sensor-readings-table';
-import Navbar from '../components/navbar';
+import { ThemeProvider } from '@/components/ThemeProvider';
+import SensorReadingsTable from '@/components/SensorReadingsTable';
+import Navbar from '@/components/Navbar';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Info } from 'lucide-react';
 

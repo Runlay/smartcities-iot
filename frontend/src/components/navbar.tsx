@@ -4,7 +4,7 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
 } from '@/components/ui/navigation-menu';
-import { ModeToggle } from './mode-toggle';
+import { ModeToggle } from './ModeToggle';
 import { Warehouse } from 'lucide-react';
 import { NavLink, useLocation } from 'react-router';
 
