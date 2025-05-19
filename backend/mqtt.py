@@ -19,7 +19,18 @@ def init_mqtt():
         # Publish a message to a topic
         random_value = random.randint(0, 100)
         print(f"Publishing random value: {random_value}")
-        mqttc.publish("sensors/temperature", str(random_value))
+
+        data = {
+            "typeId": "sensorType1",
+            "instanceId": "instance123",
+            "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+            "value": {
+            "randomValue": random_value
+            }
+        }
+
+
+        mqttc.publish("sensors/temperature", str(data))
 
         time.sleep(1)
 
