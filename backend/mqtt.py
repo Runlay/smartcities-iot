@@ -2,9 +2,11 @@ import paho.mqtt.client as mqtt
 import time
 import random
 import json
-
+from database_handler import DatabaseHandler
 
 def init_mqtt():
+    redis_client = DatabaseHandler()
+
     mqttc = mqtt.Client()
     mqttc.username_pw_set("guest", "guest")
     mqttc.connect("host.docker.internal", 1883, 60)
@@ -26,7 +28,7 @@ def init_mqtt():
 
     # Demo Publish for Topic Temperature
     mqttc.publish("sensors/temperature", json.dumps(data))
-
+    redis_client.lpush("sensors:temperature", json.dumps(data))
     #time.sleep(1)
 
 

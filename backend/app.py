@@ -44,14 +44,14 @@ async def root():
 @app.get("/api/history")
 async def get_history():
     # Fetch data from Redis
-    key = "sensors:temp"
-    stored_values = redis_client.lrange(key, 0, 9)  # Last 10 entries
+    key = "sensors:temperature"
+    stored_values = redis_client.lrange(key, 0, -1) 
 
 
     if stored_values:
         return {
             "message": "Data retrieved successfully",
-            "redis_value": str(stored_values)
+            "redis_value": stored_values
         }
     else:
         return {

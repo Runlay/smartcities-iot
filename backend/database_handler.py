@@ -8,7 +8,7 @@ class DatabaseHandler():
     
     def connect(self):
         try: 
-            self._client = redis.StrictRedis(host='redis', port=6379, db=0)
+            self._client = redis.StrictRedis(host='host.docker.internal', port=6379, db=0)
         except:
             print("Error while connecting.")
 
@@ -23,3 +23,15 @@ class DatabaseHandler():
             self._client.lpush(key, value)
         except:
             print("Error while pushing value to list.")
+
+    def get_value(self, key):
+        try:
+            return self._client.get(key)
+        except:
+            print("Error while getting value.")
+
+    def get_list_values(self, key):
+        try:
+            return self._client.lrange(key, 0, -1)
+        except:
+            print("Error while getting value.")
