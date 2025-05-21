@@ -3,7 +3,7 @@ export interface SensorReading {
   instanceId: string;
   timestamp: string;
   value: {
-    [key: string]: number;
+    [key: string]: number | boolean;
   };
 }
 

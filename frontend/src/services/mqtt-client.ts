@@ -6,7 +6,9 @@ const MQTT_ACTUATOR_TOPIC = 'actuators/#';
 
 let mqttClient: mqtt.MqttClient | null = null;
 
-export const connectMQTT = (): void => {
+export const connectMQTT = (
+  handleMessage: (topic: string, message: object) => void
+): void => {
   if (mqttClient) {
     return;
   }
@@ -40,7 +42,7 @@ export const connectMQTT = (): void => {
 
     try {
       const parsedMessage = JSON.parse(message.toString());
-      console.log(parsedMessage);
+      handleMessage(topic, parsedMessage);
     } catch (error) {
       console.error(
         'Failed to parse sensor reading message. The following error occured:',
