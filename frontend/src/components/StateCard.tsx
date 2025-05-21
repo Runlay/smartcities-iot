@@ -12,7 +12,7 @@ interface StateCardProps {
   title: string;
   icon: React.ReactElement;
   description: string;
-  value: number | string;
+  value: number | string | boolean;
   badge_text?: string;
 }
 

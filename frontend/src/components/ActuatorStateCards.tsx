@@ -1,7 +1,10 @@
 import { Lightbulb, Siren, Fan, Heater } from 'lucide-react';
 import StateCard from '@/components/StateCard';
+import { useCurrentActuatorValues } from '@/context/CurrentActuatorValuesContext';
 
 const ActuatorStateCards = () => {
+  const currentActuatorValues = useCurrentActuatorValues();
+
   return (
     <section>
       <h2 className='mt-16 mb-4 text-2xl font-bold'>Actuators</h2>
@@ -11,7 +14,7 @@ const ActuatorStateCards = () => {
           title='Heating / Air Conditioning'
           icon={<Heater className='mr-2 h-5 w-5' />}
           description='Current State of Heating / AC Actuator'
-          value='Heating Off / AC Off'
+          value={currentActuatorValues.heating ? 'Heating On' : 'Heating Off'}
           badge_text='Virtual'
         />
 
@@ -19,7 +22,11 @@ const ActuatorStateCards = () => {
           title='Ventilation'
           icon={<Fan className='mr-2 h-5 w-5' />}
           description='Current State of Ventilation Actuator'
-          value='Ventilation Off'
+          value={
+            currentActuatorValues.ventilation
+              ? 'Ventilation On'
+              : 'Ventilation Off'
+          }
           badge_text='Virtual'
         />
 
@@ -27,7 +34,9 @@ const ActuatorStateCards = () => {
           title='Lighting'
           icon={<Lightbulb className='mr-2 h-5 w-5' />}
           description='Current State of Lighting Actuator'
-          value='Lighting Off'
+          value={
+            currentActuatorValues.lighting ? 'Lighting On' : 'Lighting Off'
+          }
           badge_text='Physical'
         />
 
@@ -35,7 +44,7 @@ const ActuatorStateCards = () => {
           title='Alarm'
           icon={<Siren className='mr-2 h-5 w-5' />}
           description='Current State of Alarm Actuator'
-          value='Alarm Off'
+          value={currentActuatorValues.alarm ? 'Alarm On' : 'Alarm Off'}
           badge_text='Physical'
         />
       </div>

@@ -11,6 +11,8 @@ import type {
   CurrentSensorValues,
   CurrentActuatorValues,
 } from '@/types/types';
+import { CurrentSensorValuesContext } from './context/CurrentSensorValuesContext';
+import { CurrentActuatorValuesContext } from './context/CurrentActuatorValuesContext';
 
 const SENSOR_TYPE_IDS = {
   TEMPERATURE: 'de.uni-stuttgart.sciot.group08.aeon/temperature',
@@ -43,28 +45,29 @@ const App = () => {
 
       switch (newSensorReading.typeId) {
         case SENSOR_TYPE_IDS.TEMPERATURE:
-          setCurrentSensorValues({
-            ...currentSensorValues,
-            temperature: newSensorReading.value.value as number,
-          });
+          setCurrentSensorValues((prev) => ({
+            ...prev,
+            temperature: newSensorReading.value['randomValue'] as number, // TODO: adjust to actual key
+          }));
+
           break;
         case SENSOR_TYPE_IDS.HUMIDITY:
-          setCurrentSensorValues({
-            ...currentSensorValues,
+          setCurrentSensorValues((prev) => ({
+            ...prev,
             humidity: newSensorReading.value.value as number,
-          });
+          }));
           break;
         case SENSOR_TYPE_IDS.MOTION:
-          setCurrentSensorValues({
-            ...currentSensorValues,
+          setCurrentSensorValues((prev) => ({
+            ...prev,
             motion: newSensorReading.value.value as boolean,
-          });
+          }));
           break;
         case SENSOR_TYPE_IDS.PRESSURE:
-          setCurrentSensorValues({
-            ...currentSensorValues,
+          setCurrentSensorValues((prev) => ({
+            ...prev,
             pressure: newSensorReading.value.value as number,
-          });
+          }));
           break;
       }
     } else if (topic.startsWith('actuators/')) {
@@ -85,11 +88,15 @@ const App = () => {
 
   return (
     <SensorReadingsContext value={sensorReadings}>
-      <Routes>
-        <Route index element={<Overview />} />
-        <Route path='/environment-state' element={<EnvironmentState />} />
-        <Route path='/plan-execution' element={<PlanExecution />} />
-      </Routes>
+      <CurrentSensorValuesContext value={currentSensorValues}>
+        <CurrentActuatorValuesContext value={currentActuatorValues}>
+          <Routes>
+            <Route index element={<Overview />} />
+            <Route path='/environment-state' element={<EnvironmentState />} />
+            <Route path='/plan-execution' element={<PlanExecution />} />
+          </Routes>
+        </CurrentActuatorValuesContext>
+      </CurrentSensorValuesContext>
     </SensorReadingsContext>
   );
 };
