@@ -16,7 +16,7 @@ const App = () => {
 
   return (
     <Routes>
-      <Route path='/' element={<Overview />} />
+      <Route index element={<Overview />} />
       <Route path='/environment-state' element={<EnvironmentState />} />
       <Route path='/plan-execution' element={<PlanExecution />} />
     </Routes>

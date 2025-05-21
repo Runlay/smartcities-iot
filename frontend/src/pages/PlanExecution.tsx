@@ -1,7 +1,6 @@
 import { ThemeProvider } from '@/components/ThemeProvider';
 import Navbar from '@/components/Navbar';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Info } from 'lucide-react';
+import InfoAlert from '@/components/InfoAlert';
 
 const PlanExecution = () => {
   return (
@@ -10,12 +9,7 @@ const PlanExecution = () => {
         <Navbar />
 
         <main>
-          <Alert className='mt-2 mb-10'>
-            <Info className='h-4 w-4' />
-            <AlertDescription>
-              This page shows the latest plan (being) executed.
-            </AlertDescription>
-          </Alert>
+          <InfoAlert description='This page shows the latest plan (being) executed.' />
         </main>
       </div>
     </ThemeProvider>
