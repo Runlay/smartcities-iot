@@ -54,11 +54,11 @@ services:
     expose:
       - 4000
 
-  # gateway:
-  #   build: ./gateway
-  #   restart: always
-  #   ports:
-  #     - '5000:5000'
-  #   devices:
-  #     - "/dev/ttyUSB0:/dev/ttyUSB0"
-  #   privileged: true
+gateway:
+    build: ./gateway
+    restart: always
+    ports:
+       - '5000:5000'
+    devices:
+       - "/dev/ttyUSB0:/dev/ttyUSB0"
+    privileged: true

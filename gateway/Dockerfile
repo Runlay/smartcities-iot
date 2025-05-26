@@ -1,32 +1,24 @@
-FROM python:3.9-slim
+FROM node:20-alpine
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    git \
-    make \
-    g++ \
-    libudev-dev \
-    libyaml-dev \
-    libssl-dev \
-    libudev1 \
-    libusb-dev \
-    && rm -rf /var/lib/apt/lists/*
+# Install dependencies
+RUN apk add --no-cache python3 make g++ usbutils udev
 
-# Set workdir
+# Set working directory
 WORKDIR /app
 
-# Clone python-openzwave repo
-RUN git clone https://github.com/OpenZWave/python-openzwave.git
-WORKDIR /app/python-openzwave
+# Copy files
+COPY index.js .
+COPY package.json .
 
-# Build and install
-RUN python3 setup.py build
-RUN python3 setup.py install
+# Install dependencies
+RUN npm install
 
-# Move back to app directory
-WORKDIR /app
+# Set environment variables
+ENV SERIAL_PORT=/dev/ttyUSB0
+ENV LOGLEVEL=info
 
-# Copy your application (assumes you have app.py)
-COPY app.py .
+# Expose Z-Wave WebSocket port (if used)
+EXPOSE 3000
 
-CMD ["python3", "app.py"]
+# Start script
+CMD ["node", "index.js"]
