@@ -3,6 +3,7 @@ version: '2'
 volumes:
   redis_data:
   rabbitmq_data:
+  gateway_data:
 
 services:
   frontend:
@@ -55,10 +56,13 @@ services:
       - 4000
 
   gateway:
-    build: ./gateway
+    image: kpine/zwave-js-server:latest
     restart: always
+    privileged: true
     ports:
       - '5000:5000'
-    devices:
-      - "/dev/ttyUSB0:/dev/ttyUSB0"
-    privileged: true
+    environment:
+      USB_PATH: "/dev/ttyACM0"
+      S0_LEGACY_KEY: "1B7405BF85999197EE1F6C58B19A9E3F"
+    volumes:
+      - gateway_data:/cache

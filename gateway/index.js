@@ -3,7 +3,7 @@ const { SerialPort } = require("@serialport/stream");
 const fs = require("fs");
 
 // Get serial port path from environment
-const serialPort = process.env.SERIAL_PORT || "/dev/ttyUSB0";
+const serialPort = process.env.SERIAL_PORT || "/dev/ttyACM0";
 const logLevel = process.env.LOGLEVEL || "info";
 
 // Logging config (basic)
