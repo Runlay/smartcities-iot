@@ -21,4 +21,7 @@ ENV LOGLEVEL=info
 EXPOSE 3000
 
 # Start script
-CMD ["node", "index.js"]
+#CMD ["node", "index.js"]
+
+ENV UDEV=on
+RUN install_packages uhubctl
