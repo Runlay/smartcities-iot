@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/table';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useSensorReadings } from '@/context/SensorReadingsContext';
+import { formatSensorValue } from '@/lib/utils';
 
 const SensorReadingsTable = () => {
   const sensorReadings = useSensorReadings();
@@ -24,10 +25,12 @@ const SensorReadingsTable = () => {
         </TableHeader>
         <TableBody>
           {sensorReadings.map((sensorReading) => (
-            <TableRow key={sensorReading.instanceId}>
-              <TableCell>{sensorReading.timestamp}</TableCell>
-              <TableCell>{sensorReading.typeId}</TableCell>
-              <TableCell>{JSON.stringify(sensorReading.value)}</TableCell>
+            <TableRow key={sensorReading['instance-id']}>
+              <TableCell>
+                {new Date(sensorReading.timestamp).toLocaleString()}
+              </TableCell>
+              <TableCell>{sensorReading['type-id'].split('/').pop()}</TableCell>
+              <TableCell>{formatSensorValue(sensorReading)}</TableCell>
             </TableRow>
           ))}
         </TableBody>

@@ -2,7 +2,7 @@ import { Routes, Route } from 'react-router';
 import Overview from '@/pages/Overview';
 import EnvironmentState from '@/pages/EnvironmentState';
 import PlanExecution from '@/pages/PlanExecution';
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { connectMQTT, disconnectMQTT } from '@/services/mqtt-client';
 import { SensorReadingsContext } from './context/SensorReadingsContext';
 import { useState } from 'react';
@@ -13,13 +13,6 @@ import type {
 } from '@/types/types';
 import { CurrentSensorValuesContext } from './context/CurrentSensorValuesContext';
 import { CurrentActuatorValuesContext } from './context/CurrentActuatorValuesContext';
-
-const SENSOR_TYPE_IDS = {
-  TEMPERATURE: 'de.uni-stuttgart.sciot.group08.aeon/temperature',
-  HUMIDITY: 'humidity',
-  MOTION: 'motion',
-  PRESSURE: 'pressure',
-};
 
 const App = () => {
   const [sensorReadings, setSensorReadings] = useState<SensorReading[]>([]);
@@ -38,45 +31,70 @@ const App = () => {
       alarm: false,
     });
 
-  const handleMessage = (topic: string, message: object) => {
-    if (topic.startsWith('sensors/')) {
-      const newSensorReading = message as SensorReading;
-      setSensorReadings((prev) => [...prev, newSensorReading]);
+  const handleMessage = useCallback(
+    (topic: string, message: object) => {
+      if (topic.startsWith('sensor/')) {
+        const newSensorReading = message as SensorReading;
+        setSensorReadings((prev) => [...prev, newSensorReading]);
 
-      switch (newSensorReading.typeId) {
-        case SENSOR_TYPE_IDS.TEMPERATURE:
-          setCurrentSensorValues((prev) => ({
-            ...prev,
-            temperature: newSensorReading.value['randomValue'] as number, // TODO: adjust to actual key
-          }));
+        // Extract sensor type from topic (e.g., "sensor/temperature" -> "temperature")
+        const sensorType = topic.split('/')[1];
 
-          break;
-        case SENSOR_TYPE_IDS.HUMIDITY:
-          setCurrentSensorValues((prev) => ({
-            ...prev,
-            humidity: newSensorReading.value.value as number,
-          }));
-          break;
-        case SENSOR_TYPE_IDS.MOTION:
-          setCurrentSensorValues((prev) => ({
-            ...prev,
-            motion: newSensorReading.value.value as boolean,
-          }));
-          break;
-        case SENSOR_TYPE_IDS.PRESSURE:
-          setCurrentSensorValues((prev) => ({
-            ...prev,
-            pressure: newSensorReading.value.value as number,
-          }));
-          break;
+        switch (sensorType) {
+          case 'temperature': {
+            const tempValue = newSensorReading.value['degrees'];
+            setCurrentSensorValues((prev) => ({
+              ...prev,
+              temperature:
+                typeof tempValue === 'string'
+                  ? parseFloat(tempValue)
+                  : (tempValue as number),
+            }));
+            break;
+          }
+          case 'humidity': {
+            const humidityValue = newSensorReading.value['percent'];
+            setCurrentSensorValues((prev) => ({
+              ...prev,
+              humidity:
+                typeof humidityValue === 'string'
+                  ? parseFloat(humidityValue)
+                  : (humidityValue as number),
+            }));
+            break;
+          }
+          case 'motion': {
+            const motionValue = newSensorReading.value['detected'];
+            setCurrentSensorValues((prev) => ({
+              ...prev,
+              motion:
+                typeof motionValue === 'string'
+                  ? motionValue === '1'
+                  : (motionValue as boolean),
+            }));
+            break;
+          }
+          case 'pressure': {
+            const pressureValue = newSensorReading.value['kg'];
+            setCurrentSensorValues((prev) => ({
+              ...prev,
+              pressure:
+                typeof pressureValue === 'string'
+                  ? parseFloat(pressureValue)
+                  : (pressureValue as number),
+            }));
+            break;
+          }
+        }
+      } else if (topic.startsWith('actuators/')) {
+        console.log(
+          'Message handling for actuator messsages is not yet implemented.'
+        );
+        setCurrentActuatorValues(currentActuatorValues); // TODO: implement
       }
-    } else if (topic.startsWith('actuators/')) {
-      console.log(
-        'Message handling for actuator messsages is not yet implemented.'
-      );
-      setCurrentActuatorValues(currentActuatorValues); // TODO: implement
-    }
-  };
+    },
+    [currentActuatorValues]
+  );
 
   useEffect(() => {
     connectMQTT(handleMessage);
@@ -84,7 +102,7 @@ const App = () => {
     return () => {
       disconnectMQTT();
     };
-  }, []);
+  }, [handleMessage]);
 
   return (
     <SensorReadingsContext value={sensorReadings}>

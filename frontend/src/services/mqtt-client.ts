@@ -1,8 +1,8 @@
 import mqtt from 'mqtt';
 
 const MQTT_BROKER_URL = 'ws://localhost:15675/ws';
-const MQTT_SENSOR_TOPIC = 'sensors/#';
-const MQTT_ACTUATOR_TOPIC = 'actuators/#';
+const MQTT_SENSOR_TOPIC = 'sensor/#';
+const MQTT_ACTUATOR_TOPIC = 'actuator/#';
 
 let mqttClient: mqtt.MqttClient | null = null;
 
