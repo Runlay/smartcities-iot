@@ -4,13 +4,9 @@ import uvicorn
 from mqtt import init_mqtt
 from database_handler import DatabaseHandler
 import json
-import time
-import random
+
 
 app = FastAPI()
-
-# Test Demo of MQTT Client Implementation
-# init_mqtt()
 
 redis_client = DatabaseHandler()
 
