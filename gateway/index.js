@@ -3,11 +3,14 @@ const { SerialPort } = require("@serialport/stream");
 const fs = require("fs");
 
 // Get serial port path from environment
-const serialPort = process.env.SERIAL_PORT || "/dev/ttyACM0";
+const serialPort = process.env.USB_PATH || "/dev/ttyACM0";
 const logLevel = process.env.LOGLEVEL || "info";
 
 // Logging config (basic)
 const driver = new Driver(serialPort, {
+  serialPort: {
+    baudRate: 115200,
+  },
   logConfig: {
     level: logLevel,
   },
@@ -35,6 +38,7 @@ driver.on("error", (err) => {
 
 // Start the driver
 (async () => {
+    console.log("TEST: Starting Z-Wave driver...");
   try {
     await driver.start();
     console.log("Driver started successfully.");

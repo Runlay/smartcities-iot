@@ -130,13 +130,25 @@ services:
     entrypoint: ['./fast-downward.py']
 
   gateway:
-    image: kpine/zwave-js-server:latest
+    image: zwavejs/zwave-js-ui:latest
+    #build: ./gateway
     restart: always
     privileged: true
     ports:
+      - '8091:8091' # Web interface port
       - '5000:5000'
+    devices:
+      - '/dev/serial/by-id/usb-0658_0200-if00:/dev/zwave'
+    tty: true
+    stop_signal: SIGINT
+    networks:
+      - zwave
     environment:
-      USB_PATH: ${GATEWAY_USB_PATH}
-      S0_LEGACY_KEY: ${GATEWAY_S0_LEGACY_KEY}
-    # volumes:
-    #   - gateway_data:/cache
+      USB_PATH: "/dev/ttyACM0"
+      S0_LEGACY_KEY: "1B7405BF85999197EE1F6C58B19A9E3F"
+      ZWAVEJS_EXTERNAL_CONFIG: "/usr/src/app/store/.config-db"
+    volumes:
+      - gateway_data:/usr/src/app/store
+    expose:
+      - 8091
+     # - 3000
