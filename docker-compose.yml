@@ -55,20 +55,6 @@ services:
     expose:
       - 4000
 
-  context:
-    build: ./context
-    restart: always
-    depends_on:
-      - rabbitmq
-    environment:
-      - MQTT_BROKER=rabbitmq
-      - MQTT_PORT=1883
-      - TEMPERATURE_TARGET=22.0
-      - TEMPERATURE_TOLERANCE=2.0
-      - HUMIDITY_TARGET=50.0
-      - HUMIDITY_TOLERANCE=10.0
-      - PRESSURE_THRESHOLD=1000.0
-
   gateway:
     image: kpine/zwave-js-server:latest
     restart: always

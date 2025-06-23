@@ -1,9 +1,0 @@
-[project]
-name = "context"
-version = "0.1.0"
-description = "Context service for SmartStore IoT system - transforms sensor readings into discrete states"
-readme = "README.md"
-requires-python = ">=3.13"
-dependencies = [
-    "paho-mqtt>=1.6.1",
-]

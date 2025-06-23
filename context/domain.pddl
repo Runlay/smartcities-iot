@@ -1,142 +1,112 @@
-(define (domain warehouse)
+(define (domain smart-store)
 
-    ;; Requirements for simple level 1 PDDL
-    (:requirements :strips :adl)
-
-    ;; Types
-    (:types
-        level
-    )
-
-    ;; Predicates:
-    (:predicates
-        ;; Sensor States
-        (temperature-state ?l - level)
-        (humidity-state ?l - level)
-        (motion-detected)
-        (pressure-state ?l - level)
-
-        ;; Actuator States
-        (ac-on)
-        (ventilation-on)
-        (lighting-on)
-        (alarm-activated)
-
-        ;; Goal States
-        (is-comfortable)
-        (is-safe)
-        (is-energy-efficient)
-    )
-
-    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    ;;; ACTIONS
-    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-    ;;; Action to cool the warehouse if it's too hot.
-    (:action turn-on-ac
-        :precondition (and
-            (temperature-state high)        ; IF temperature is high
-            (not (is-comfortable))          ; AND the goal of comfort is not yet met
-        )
-        :effect (and
-            (ac-on)                         ; THEN turn the AC on
-            (is-comfortable)                ; This action makes the environment comfortable
-            
-            ;; The action's effect models the transition to the desired state.
-            (not (temperature-state high))
-            (temperature-state ok)
-
-            ;; Turning a device on makes the system not energy-efficient.
-            (not (is-energy-efficient))
-        )
-    )
-
-    ;;; Action to turn off the AC when it's no longer needed. This promotes energy efficiency.
-    (:action turn-off-ac
-        :precondition (and
-            (temperature-state ok)          ; IF temperature is fine
-            (ac-on)                         ; AND the AC is on
-        )
-        :effect (and
-            (not (ac-on))                   ; THEN turn the AC off
-            (is-energy-efficient)           ; This action helps achieve the energy efficiency goal
-        )
-    )
-
-    ;;; Action to turn on ventilation if humidity is high.
-    (:action turn-on-ventilation
-        :precondition (and
-            (humidity-state high)
-            (not (is-comfortable))
-        )
-        :effect (and
-            (ventilation-on)
-            (is-comfortable)
-            (not (humidity-state high))
-            (humidity-state ok)
-            (not (is-energy-efficient))
-        )
-    )
-
-    ;;; Action to turn off ventilation when it's no longer needed.
-    (:action turn-off-ventilation
-        :precondition (and
-            (humidity-state ok)
-            (ventilation-on)
-        )
-        :effect (and
-            (not (ventilation-on))
-            (is-energy-efficient)
-        )
-    )
-
-    ;;; Action to turn on the lights when motion is detected.
-    (:action turn-on-lighting
-        :precondition (and
-            (motion-detected)
-            (not (lighting-on))
-        )
-        :effect (and
-            (lighting-on)
-            (not (is-energy-efficient))
-        )
-    )
+  ;; Level 1 PDDL (STRIPS and ADL)
+  (:requirements :strips :adl)
+  
+  ;; Predicates
+  (:predicates
+    ;; Temperature sensor states
+    (temperature-low)
+    (temperature-ok)
+    (temperature-high)
     
-    ;;; Action to turn off the lights when no motion is detected.
-    (:action turn-off-lighting
-        :precondition (and
-            (not (motion-detected))
-            (lighting-on)
-        )
-        :effect (and
-            (not (lighting-on))
-            (is-energy-efficient)
-        )
-    )
-
-    ;;; Action to trigger the alarm if pressure is too high.
-    (:action activate-alarm
-        :precondition (and
-            (pressure-state high)           ; IF pressure is high
-            (not (is-safe))                 ; AND the environment is not yet considered safe
-        )
-        :effect (and
-            (alarm-activated)
-            (is-safe)                       ; Signaling the danger makes the environment "safe" from a response standpoint
-            (not (pressure-state high))
-            (pressure-state ok)
-        )
-    )
+    ;; Humidity sensor states
+    (humidity-low)
+    (humidity-ok)
+    (humidity-high)
     
-    ;;; Action to deactivate the alarm once the pressure is back to normal.
-    (:action deactivate-alarm
-        :precondition (and
-            (pressure-state ok)
-            (alarm-activated)
-        )
-        :effect (and
-            (not (alarm-activated))
-            (is-safe)
-        )
+    ;; Pressure sensor states
+    (pressure-ok)
+    (pressure-high)
+    
+    ;; Motion sensor states
+    (motion-detected)
+    (no-motion-detected)
+    
+    ;; Actuator states
+    (ac-on)
+    (ventilation-on)
+    (light-on)
+    (alarm-on)
+  )
+  
+  ;; Action to turn AC on when temperature is high
+  (:action turn-ac-on
+    :parameters ()
+    :precondition (and 
+      (temperature-high)
+      (not (ac-on))
     )
+    :effect (ac-on)
+  )
+  
+  ;; Action to turn AC off when temperature is not high
+  (:action turn-ac-off
+    :parameters ()
+    :precondition (and 
+      (or (temperature-low) (temperature-ok))
+      (ac-on)
+    )
+    :effect ((not (ac-on)))
+  )
+  
+  ;; Action to turn ventilation on when humidity is high
+  (:action turn-ventilation-on
+    :parameters ()
+    :precondition (and 
+      (humidity-high)
+      (not (ventilation-on))
+    )
+    :effect (ventilation-on)
+  )
+  
+  ;; Action to turn ventilation off when humidity is not high
+  (:action turn-ventilation-off
+    :parameters ()
+    :precondition (and 
+      (or (humidity-low) (humidity-ok))
+      (ventilation-on)
+    )
+    :effect (not (ventilation-on))
+  )
+  
+  ;; Action to turn light on when motion is detected
+  (:action turn-light-on
+    :parameters ()
+    :precondition (and 
+      (motion-detected)
+      (not (light-on))
+    )
+    :effect (light-on)
+  )
+  
+  ;; Action to turn light off when no motion is detected
+  (:action turn-light-off
+    :parameters ()
+    :precondition (and 
+      (no-motion-detected)
+      (light-on)
+    )
+    :effect (not (light-on))
+  )
+  
+  ;; Action to turn alarm on when pressure is high
+  (:action turn-alarm-on
+    :parameters ()
+    :precondition (and 
+      (pressure-high)
+      (not (alarm-on))
+    )
+    :effect (alarm-on)
+  )
+  
+  ;; Action to turn alarm off when pressure is ok
+  (:action turn-alarm-off
+    :parameters ()
+    :precondition (and 
+      (pressure-ok)
+      (alarm-on)
+    )
+    :effect (not (alarm-on))
+  )
 )
