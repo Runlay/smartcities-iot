@@ -49,6 +49,9 @@ const Navbar = () => {
               <NavigationMenuItem>
                 <RouterLink to='/plan-execution'>Plan Execution</RouterLink>
               </NavigationMenuItem>
+              <NavigationMenuItem>
+                <RouterLink to='/configuration'>Configuration</RouterLink>
+              </NavigationMenuItem>
             </NavigationMenuList>
           </NavigationMenu>
         </nav>

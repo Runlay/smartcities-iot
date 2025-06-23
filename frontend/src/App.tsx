@@ -13,6 +13,7 @@ import type {
 } from '@/types/types';
 import { CurrentSensorValuesContext } from './context/CurrentSensorValuesContext';
 import { CurrentActuatorValuesContext } from './context/CurrentActuatorValuesContext';
+import Configuration from './pages/Configuration';
 
 const App = () => {
   const [sensorReadings, setSensorReadings] = useState<SensorReading[]>([]);
@@ -112,6 +113,7 @@ const App = () => {
             <Route index element={<Overview />} />
             <Route path='/environment-state' element={<EnvironmentState />} />
             <Route path='/plan-execution' element={<PlanExecution />} />
+            <Route path='/configuration' element={<Configuration />} />
           </Routes>
         </CurrentActuatorValuesContext>
       </CurrentSensorValuesContext>
