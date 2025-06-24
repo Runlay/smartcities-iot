@@ -1,22 +1,43 @@
 export type SensorReading = {
-  'type-id': string;
-  'instance-id': string;
+  typeId: string;
+  instanceId: string;
   timestamp: string;
   value: {
-    [key: string]: string;
+    degrees?: number; // Temperature in degrees Celsius
+    percent?: number; // Humidity in percentage
+    detected?: boolean; // Motion detected (boolean)
+    kg?: number; // Pressure in kilograms
   };
 };
 
-export type CurrentSensorValues = {
-  temperature: number;
-  humidity: number;
-  motion: boolean;
-  pressure: number;
+export type EnvironmentState = {
+  sensors: {
+    temperature: number;
+    humidity: number;
+    motionDetected: boolean;
+    pressure: number;
+  };
+  actuators: {
+    acOn: boolean;
+    ventilationOn: boolean;
+    lightOn: boolean;
+    alarmOn: boolean;
+  };
 };
 
-export type CurrentActuatorValues = {
-  heating: boolean;
-  ventilation: boolean;
-  lighting: boolean;
-  alarm: boolean;
+export type EnvironmentConfiguration = {
+  temperature: {
+    targetValue: number;
+    targetThreshold: number;
+  };
+  humidity: {
+    targetValue: number;
+    targetThreshold: number;
+  };
+  pressure: {
+    targetThreshold: number;
+  };
+  motion: {
+    targetThreshold: number;
+  };
 };

@@ -60,3 +60,18 @@ export const disconnectMQTT = (): void => {
     });
   }
 };
+
+export const publishMessage = (topic: string, message: string): void => {
+  if (!mqttClient) {
+    console.error('MQTT client is not connected.');
+    return;
+  }
+
+  mqttClient.publish(topic, message, (err) => {
+    if (err) {
+      console.error(`Failed to publish message to topic ${topic}. Error:`, err);
+    } else {
+      console.log(`Published message to topic ${topic}: ${message}`);
+    }
+  });
+};

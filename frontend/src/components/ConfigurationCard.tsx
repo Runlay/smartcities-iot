@@ -52,6 +52,14 @@ const ConfigurationCard = ({
     }
   };
 
+  // const handleSubmit = () => {
+  //   const configuration = {
+  //     targetThreshold: targetThreshold,
+  //     targetValue: targetValue,
+  //   };
+
+  // };
+
   let targetInterval = {
     start: 0,
     end: 0,
@@ -92,7 +100,7 @@ const ConfigurationCard = ({
           <Input
             type='number'
             id='temperature-threshold'
-            onChangeCapture={handleTemperatureThresholdChange}
+            onChange={handleTemperatureThresholdChange}
             value={targetThreshold}
           />
         </p>

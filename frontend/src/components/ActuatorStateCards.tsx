@@ -1,9 +1,11 @@
-import { Lightbulb, Siren, Fan, Heater } from 'lucide-react';
+import { Lightbulb, Siren, Fan, AirVent } from 'lucide-react';
 import StateCard from '@/components/StateCard';
-import { useCurrentActuatorValues } from '@/context/CurrentActuatorValuesContext';
+
+import { useContext } from 'react';
+import { EnvironmentStateContext } from '@/context/EnvironmentStateContext';
 
 const ActuatorStateCards = () => {
-  const currentActuatorValues = useCurrentActuatorValues();
+  const environmentState = useContext(EnvironmentStateContext);
 
   return (
     <section>
@@ -11,10 +13,10 @@ const ActuatorStateCards = () => {
 
       <div className='grid grid-cols-4 gap-8'>
         <StateCard
-          title='Heating / Air Conditioning'
-          icon={<Heater className='mr-2 h-5 w-5' />}
-          description='Current State of Heating / AC Actuator'
-          value={currentActuatorValues.heating ? 'Heating On' : 'Heating Off'}
+          title='Air Conditioning'
+          icon={<AirVent className='mr-2 h-5 w-5' />}
+          description='Current State of AC Actuator'
+          value={environmentState?.actuators.acOn ? 'AC On' : 'AC Off'}
           badge_text='Virtual'
         />
 
@@ -23,7 +25,7 @@ const ActuatorStateCards = () => {
           icon={<Fan className='mr-2 h-5 w-5' />}
           description='Current State of Ventilation Actuator'
           value={
-            currentActuatorValues.ventilation
+            environmentState?.actuators.ventilationOn
               ? 'Ventilation On'
               : 'Ventilation Off'
           }
@@ -34,9 +36,7 @@ const ActuatorStateCards = () => {
           title='Lighting'
           icon={<Lightbulb className='mr-2 h-5 w-5' />}
           description='Current State of Lighting Actuator'
-          value={
-            currentActuatorValues.lighting ? 'Lighting On' : 'Lighting Off'
-          }
+          value={environmentState?.actuators.lightOn ? 'Light On' : 'Light Off'}
           badge_text='Physical'
         />
 
@@ -44,7 +44,7 @@ const ActuatorStateCards = () => {
           title='Alarm'
           icon={<Siren className='mr-2 h-5 w-5' />}
           description='Current State of Alarm Actuator'
-          value={currentActuatorValues.alarm ? 'Alarm On' : 'Alarm Off'}
+          value={environmentState?.actuators.alarmOn ? 'Alarm On' : 'Alarm Off'}
           badge_text='Physical'
         />
       </div>

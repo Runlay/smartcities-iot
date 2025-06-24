@@ -1,10 +1,12 @@
 import { Droplets, Move3D, Thermometer, Weight } from 'lucide-react';
 import StateCard from '@/components/StateCard';
-import { useCurrentSensorValues } from '@/context/CurrentSensorValuesContext';
 import { formatCurrentSensorValue } from '@/lib/utils';
 
+import { useContext } from 'react';
+import { EnvironmentStateContext } from '@/context/EnvironmentStateContext';
+
 const SensorStateCards = () => {
-  const currentSensorValues = useCurrentSensorValues();
+  const environmentState = useContext(EnvironmentStateContext);
 
   return (
     <section>
@@ -17,7 +19,7 @@ const SensorStateCards = () => {
           description='Latest Temperature Sensor Reading'
           value={formatCurrentSensorValue(
             'temperature',
-            currentSensorValues.temperature
+            environmentState!.sensors.temperature
           )}
         />
 
@@ -27,7 +29,7 @@ const SensorStateCards = () => {
           description='Latest Humidity Sensor Reading'
           value={formatCurrentSensorValue(
             'humidity',
-            currentSensorValues.humidity
+            environmentState!.sensors.humidity
           )}
         />
 
@@ -35,7 +37,10 @@ const SensorStateCards = () => {
           title='Motion'
           icon={<Move3D className='mr-2 h-5 w-5' />}
           description='Latest Motion Sensor Reading'
-          value={formatCurrentSensorValue('motion', currentSensorValues.motion)}
+          value={formatCurrentSensorValue(
+            'motion',
+            environmentState!.sensors.motionDetected
+          )}
         />
 
         <StateCard
@@ -44,7 +49,7 @@ const SensorStateCards = () => {
           description='Latest Pressure Sensor Reading'
           value={formatCurrentSensorValue(
             'pressure',
-            currentSensorValues.pressure
+            environmentState!.sensors.pressure
           )}
         />
       </div>

@@ -25,11 +25,11 @@ const SensorReadingsTable = () => {
         </TableHeader>
         <TableBody>
           {sensorReadings.map((sensorReading) => (
-            <TableRow key={sensorReading['instance-id']}>
+            <TableRow key={sensorReading['instanceId']}>
               <TableCell>
                 {new Date(sensorReading.timestamp).toLocaleString()}
               </TableCell>
-              <TableCell>{sensorReading['type-id'].split('/').pop()}</TableCell>
+              <TableCell>{sensorReading['typeId'].split('/').pop()}</TableCell>
               <TableCell>{formatSensorValue(sensorReading)}</TableCell>
             </TableRow>
           ))}

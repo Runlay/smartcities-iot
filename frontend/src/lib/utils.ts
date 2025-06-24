@@ -7,7 +7,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function formatSensorValue(sensorReading: SensorReading): string {
-  const typeId = sensorReading['type-id'];
+  const typeId = sensorReading.typeId;
   const value = sensorReading.value;
 
   // Extract sensor type from type-id (e.g., "de.uni-stuttgart.sciot.aeon/temperature" -> "temperature")
@@ -19,7 +19,7 @@ export function formatSensorValue(sensorReading: SensorReading): string {
     case 'humidity':
       return `${value.percent}%`;
     case 'motion':
-      return value.detected === '1' ? 'Motion Detected' : 'No Motion';
+      return value.detected ? 'Motion Detected' : 'No Motion';
     case 'pressure':
       return `${value.kg} kg`;
     default:

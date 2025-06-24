@@ -5,7 +5,7 @@ import SensorStateCards from '@/components/SensorStateCards';
 import ActuatorStateCards from '@/components/ActuatorStateCards';
 import InfoAlert from '@/components/InfoAlert';
 
-const EnvironmentState = () => {
+const EnvironmentStatePage = () => {
   return (
     <ThemeProvider>
       <div className='container mx-auto px-6'>
@@ -23,4 +23,4 @@ const EnvironmentState = () => {
   );
 };
 
-export default EnvironmentState;
+export default EnvironmentStatePage;
