@@ -11,13 +11,20 @@ import { Input } from '@/components/ui/input';
 
 import { useState } from 'react';
 import { Button } from './ui/button';
+import type { ConfigKey } from '@/types/types';
+import { capitalize } from '@/lib/utils';
 
 interface ConfigurationCardProps {
-  type: string;
-  unit?: string;
+  type: ConfigKey;
+  unit: string;
   description: string;
   defaultValue?: number;
-  defaultThreshold?: number;
+  defaultThreshold: number;
+  onSubmit: (
+    type: ConfigKey,
+    targetValue: number | undefined,
+    targetThreshold: number
+  ) => void;
 }
 
 const ConfigurationCard = ({
@@ -26,13 +33,13 @@ const ConfigurationCard = ({
   description,
   defaultValue,
   defaultThreshold,
+  onSubmit,
 }: ConfigurationCardProps) => {
   const [targetValue, setTargetValue] = useState<number | undefined>(
     defaultValue
   );
-  const [targetThreshold, setTargetThreshold] = useState<number | undefined>(
-    defaultThreshold
-  );
+  const [targetThreshold, setTargetThreshold] =
+    useState<number>(defaultThreshold);
 
   const handleTargetTemperatureChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -52,14 +59,6 @@ const ConfigurationCard = ({
     }
   };
 
-  // const handleSubmit = () => {
-  //   const configuration = {
-  //     targetThreshold: targetThreshold,
-  //     targetValue: targetValue,
-  //   };
-
-  // };
-
   let targetInterval = {
     start: 0,
     end: 0,
@@ -74,52 +73,54 @@ const ConfigurationCard = ({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{type} Configuration</CardTitle>
+        <CardTitle>{capitalize(type)} Configuration</CardTitle>
         <CardDescription>{description}</CardDescription>
       </CardHeader>
 
       <CardContent className='flex flex-col gap-4'>
         {targetValue && (
-          <p className='flex max-w-sm flex-col gap-2'>
-            <Label htmlFor='target-temperature'>
-              Target {type} ({unit})
+          <div className='flex max-w-sm flex-col gap-2'>
+            <Label htmlFor={`target-${type.toLowerCase()}`}>
+              Target {capitalize(type)} ({unit})
             </Label>
             <Input
               type='number'
-              id='target-temperature'
+              id={`target-${type.toLowerCase()}`}
               onChange={handleTargetTemperatureChange}
               value={targetValue}
             />
-          </p>
+          </div>
         )}
 
-        <p className='flex max-w-sm flex-col gap-2'>
-          <Label htmlFor='temperature-threshold'>
-            {type} Threshold ({unit})
+        <div className='flex max-w-sm flex-col gap-2'>
+          <Label htmlFor={`${type.toLowerCase()}-threshold`}>
+            {capitalize(type)} Threshold ({unit})
           </Label>
           <Input
             type='number'
-            id='temperature-threshold'
+            id={`${type.toLowerCase()}-threshold`}
             onChange={handleTemperatureThresholdChange}
             value={targetThreshold}
           />
-        </p>
+        </div>
 
         {targetValue && (
-          <p>
+          <div>
             <h3>Target Interval</h3>
             <span className='text-muted-foreground text-sm'>
               {targetInterval.start}
               {unit} - {targetInterval.end}
               {unit}
             </span>
-          </p>
+          </div>
         )}
       </CardContent>
 
       <CardFooter>
         {/* TODO: handle click: send message with new values */}
-        <Button>Confirm</Button>
+        <Button onClick={() => onSubmit(type, targetValue, targetThreshold)}>
+          Confirm
+        </Button>
       </CardFooter>
     </Card>
   );

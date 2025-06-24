@@ -1,9 +1,13 @@
 import type { EnvironmentState } from '@/types/types';
-import { createContext, useContext } from 'react';
+import React, { createContext, useContext } from 'react';
 
-export const EnvironmentStateContext = createContext<EnvironmentState | null>(
-  null
-);
+type EnvironmentStateContextType = {
+  environmentState: EnvironmentState;
+  setEnvironmentState: React.Dispatch<React.SetStateAction<EnvironmentState>>;
+};
+
+export const EnvironmentStateContext =
+  createContext<EnvironmentStateContextType | null>(null);
 
 export const useEnvironmentState = () => {
   const context = useContext(EnvironmentStateContext);

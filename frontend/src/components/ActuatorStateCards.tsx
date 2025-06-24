@@ -1,11 +1,12 @@
 import { Lightbulb, Siren, Fan, AirVent } from 'lucide-react';
 import StateCard from '@/components/StateCard';
 
-import { useContext } from 'react';
-import { EnvironmentStateContext } from '@/context/EnvironmentStateContext';
+import { useEnvironmentState } from '@/context/EnvironmentStateContext';
 
 const ActuatorStateCards = () => {
-  const environmentState = useContext(EnvironmentStateContext);
+  const environmentState = useEnvironmentState();
+  const actuatorValues = environmentState!.environmentState.actuators;
+  const { acOn, ventilationOn, lightOn, alarmOn } = actuatorValues;
 
   return (
     <section>
@@ -16,7 +17,7 @@ const ActuatorStateCards = () => {
           title='Air Conditioning'
           icon={<AirVent className='mr-2 h-5 w-5' />}
           description='Current State of AC Actuator'
-          value={environmentState?.actuators.acOn ? 'AC On' : 'AC Off'}
+          value={acOn ? 'AC On' : 'AC Off'}
           badge_text='Virtual'
         />
 
@@ -24,11 +25,7 @@ const ActuatorStateCards = () => {
           title='Ventilation'
           icon={<Fan className='mr-2 h-5 w-5' />}
           description='Current State of Ventilation Actuator'
-          value={
-            environmentState?.actuators.ventilationOn
-              ? 'Ventilation On'
-              : 'Ventilation Off'
-          }
+          value={ventilationOn ? 'Ventilation On' : 'Ventilation Off'}
           badge_text='Virtual'
         />
 
@@ -36,7 +33,7 @@ const ActuatorStateCards = () => {
           title='Lighting'
           icon={<Lightbulb className='mr-2 h-5 w-5' />}
           description='Current State of Lighting Actuator'
-          value={environmentState?.actuators.lightOn ? 'Light On' : 'Light Off'}
+          value={lightOn ? 'Light On' : 'Light Off'}
           badge_text='Physical'
         />
 
@@ -44,7 +41,7 @@ const ActuatorStateCards = () => {
           title='Alarm'
           icon={<Siren className='mr-2 h-5 w-5' />}
           description='Current State of Alarm Actuator'
-          value={environmentState?.actuators.alarmOn ? 'Alarm On' : 'Alarm Off'}
+          value={alarmOn ? 'Alarm On' : 'Alarm Off'}
           badge_text='Physical'
         />
       </div>

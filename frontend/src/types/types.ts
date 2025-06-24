@@ -10,6 +10,8 @@ export type SensorReading = {
   };
 };
 
+export type ConfigKey = 'temperature' | 'humidity' | 'pressure' | 'motion';
+
 export type EnvironmentState = {
   sensors: {
     temperature: number;
@@ -23,21 +25,20 @@ export type EnvironmentState = {
     lightOn: boolean;
     alarmOn: boolean;
   };
-};
-
-export type EnvironmentConfiguration = {
-  temperature: {
-    targetValue: number;
-    targetThreshold: number;
-  };
-  humidity: {
-    targetValue: number;
-    targetThreshold: number;
-  };
-  pressure: {
-    targetThreshold: number;
-  };
-  motion: {
-    targetThreshold: number;
+  configuration: {
+    temperature: {
+      targetValue: number;
+      targetThreshold: number;
+    };
+    humidity: {
+      targetValue: number;
+      targetThreshold: number;
+    };
+    pressure: {
+      targetThreshold: number;
+    };
+    motion: {
+      targetThreshold: number;
+    };
   };
 };
