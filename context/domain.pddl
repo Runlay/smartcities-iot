@@ -47,7 +47,7 @@
       (or (temperature-low) (temperature-ok))
       (ac-on)
     )
-    :effect ((not (ac-on)))
+    :effect (not (ac-on))
   )
   
   ;; Action to turn ventilation on when humidity is high
