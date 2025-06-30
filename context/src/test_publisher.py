@@ -55,7 +55,7 @@ def publish_sensor_data(client):
     # Pressure sensor data
     pressure_data = {
         "type": "pressure",
-        "value": str(round(random.uniform(50.0, 150.0), 1)),
+        "value": str(int(round(random.uniform(50.0, 150.0), 1))),
         "unit": "kg",
         "timestamp": datetime.now().isoformat() + "Z",
         "instanceId": generate_instance_id(),
@@ -70,7 +70,7 @@ def publish_actuator_states(client):
     actuators = ["ac", "ventilation", "light", "alarm"]
 
     for actuator in actuators:
-        state_data = {"state": random.choice([True, False])}
+        state_data = {"isOn": random.choice([True, False])}
         client.publish(f"actuator/{actuator}/state", json.dumps(state_data))
         print(f"Published to actuator/{actuator}/state: {state_data}")
 

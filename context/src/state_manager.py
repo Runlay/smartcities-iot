@@ -1,9 +1,5 @@
 from typing import Dict, Any
 
-# subscribe to sensor/+
-# subscribe to actuator/+/state
-# publish to env/state on every change
-
 
 class EnvironmentStateManager:
     def __init__(self):
