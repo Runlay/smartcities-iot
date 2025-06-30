@@ -10,19 +10,20 @@ def on_connect(client, userdata, flags, reason_code, properties):
     print(f"Connected to MQTT broker with result code {reason_code}")
 
 
-def generate_sensor_reading(sensor_type, value_key, value, unit):
+def generate_sensor_reading(sensor_type, value, unit):
     return {
-        "type-id": f"de.uni-stuttgart.sciot.aeon/{sensor_type}",
-        "instance-id": f"0x{random.randint(100000000, 999999999):x}",
+        "type": sensor_type,
+        "instanceId": f"0x{random.randint(100000000, 999999999):x}",
         "timestamp": datetime.now().isoformat() + "Z",
-        "value": {value_key: str(value)},
+        "value": value,
+        "unit": unit,
     }
 
 
 def publish_temperature(client):
     while True:
         temp = round(20 + random.uniform(-3, 8), 1)  # 17-28°C
-        reading = generate_sensor_reading("temperature", "degrees", temp, "°C")
+        reading = generate_sensor_reading("temperature", temp, "°C")
         client.publish("sensor/temperature", json.dumps(reading))
         print(f"Published temperature: {temp}°C")
         time.sleep(5)
@@ -31,7 +32,7 @@ def publish_temperature(client):
 def publish_humidity(client):
     while True:
         humidity = round(random.uniform(30, 70))  # 30-70%
-        reading = generate_sensor_reading("humidity", "percent", humidity, "%")
+        reading = generate_sensor_reading("humidity", humidity, "%")
         client.publish("sensor/humidity", json.dumps(reading))
         print(f"Published humidity: {humidity}%")
         time.sleep(10)
@@ -40,7 +41,7 @@ def publish_humidity(client):
 def publish_motion(client):
     while True:
         motion = 1 if random.random() > 0.7 else 0  # 30% chance
-        reading = generate_sensor_reading("motion", "detected", motion, "boolean")
+        reading = generate_sensor_reading("motion", motion, "boolean")
         client.publish("sensor/motion", json.dumps(reading))
         print(f"Published motion: {'true' if motion else 'false'}")
         time.sleep(3)
@@ -49,7 +50,7 @@ def publish_motion(client):
 def publish_pressure(client):
     while True:
         pressure = round(random.uniform(0, 1000))  # 0-1000 kg
-        reading = generate_sensor_reading("pressure", "kg", pressure, "kg")
+        reading = generate_sensor_reading("pressure", pressure, "kg")
         client.publish("sensor/pressure", json.dumps(reading))
         print(f"Published pressure: {pressure}kg")
         time.sleep(30)
