@@ -5,7 +5,7 @@ RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y \
     cmake \
     g++-11 \ 
-    g++-11-multilib \
+    # g++-11-multilib \
     mercurial \
     make \
     python3 \
