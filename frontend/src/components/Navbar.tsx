@@ -4,58 +4,71 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
 } from '@/components/ui/navigation-menu';
-import { ModeToggle } from '@/components/ModeToggle';
-import { Warehouse } from 'lucide-react';
+import { Cog, FileText, Home, List, Warehouse } from 'lucide-react';
 import { NavLink, useLocation } from 'react-router';
+import { ModeToggle } from './ModeToggle';
 
-interface RouterLinkProps {
+interface NavMenuLinkProps {
   to: string;
   children: React.ReactNode;
 }
 
-const RouterLink = ({ to, children }: RouterLinkProps) => {
+const NavMenuLink = ({ to, children }: NavMenuLinkProps) => {
   const location = useLocation();
-  const isActive = location.pathname === to;
 
   return (
-    <NavigationMenuLink asChild data-active={isActive}>
-      <NavLink to={to} end>
-        {children}
-      </NavLink>
+    <NavigationMenuLink asChild data-active={location.pathname === to}>
+      <NavLink to={to}>{children}</NavLink>
     </NavigationMenuLink>
   );
 };
 
 const Navbar = () => {
   return (
-    <header className='flex items-center justify-between py-6'>
-      <div className='flex items-center'>
-        <div className='mr-6 flex items-center'>
-          <Warehouse className='mr-2'></Warehouse>
-          <span className='cursor-default'>SmartStore</span>
+    <header className='flex items-center justify-between px-4 py-6'>
+      <div>
+        <div className='flex items-center gap-2'>
+          <Warehouse />
+          <h1>SmartStore</h1>
         </div>
-
-        <nav>
-          <NavigationMenu>
-            <NavigationMenuList>
-              <NavigationMenuItem>
-                <RouterLink to='/'>Overview</RouterLink>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <RouterLink to='/environment-state'>
-                  Environment State
-                </RouterLink>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <RouterLink to='/plan-execution'>Plan Execution</RouterLink>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <RouterLink to='/configuration'>Configuration</RouterLink>
-              </NavigationMenuItem>
-            </NavigationMenuList>
-          </NavigationMenu>
-        </nav>
       </div>
+
+      <NavigationMenu>
+        <NavigationMenuList>
+          <NavigationMenuItem>
+            <NavMenuLink to='/'>
+              <div className='flex items-center gap-2'>
+                <Home className='w-5 h-5 text-foreground' />
+                <span>Dashboard</span>
+              </div>
+            </NavMenuLink>
+          </NavigationMenuItem>
+          <NavigationMenuItem>
+            <NavMenuLink to='/configuration'>
+              <div className='flex items-center gap-2'>
+                <Cog className='w-5 h-5 text-foreground' />
+                <span>Configuration</span>
+              </div>
+            </NavMenuLink>
+          </NavigationMenuItem>
+          <NavigationMenuItem>
+            <NavMenuLink to='/plan-execution'>
+              <div className='flex items-center gap-2'>
+                <List className='w-5 h-5 text-foreground' />
+                <span>Plan Execution</span>
+              </div>
+            </NavMenuLink>
+          </NavigationMenuItem>
+          <NavigationMenuItem>
+            <NavMenuLink to='/raw-data'>
+              <div className='flex items-center gap-2'>
+                <FileText className='w-5 h-5 text-foreground' />
+                <span>Raw Data</span>
+              </div>
+            </NavMenuLink>
+          </NavigationMenuItem>
+        </NavigationMenuList>
+      </NavigationMenu>
 
       <ModeToggle />
     </header>
