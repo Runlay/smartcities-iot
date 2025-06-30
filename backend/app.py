@@ -1,7 +1,6 @@
 import redis
 from fastapi import FastAPI
 import uvicorn
-from mqtt import init_mqtt
 from database_handler import DatabaseHandler
 import json
 
