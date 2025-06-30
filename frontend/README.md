@@ -76,7 +76,7 @@
 }
 ```
 
-## Raw Sensor Data (published to `env/sensor/+` by gateway (and/or simulated sensors) component)
+## Raw Sensor Data (published to `sensor/+` by gateway (and/or simulated sensors) component)
 
 Published to corresponding sub-topics:
 
