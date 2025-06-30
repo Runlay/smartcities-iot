@@ -55,6 +55,10 @@ services:
     expose:
       - 4000
 
+  # context:
+  #   build: ./context
+  #   restart: always
+
   gateway:
     image: kpine/zwave-js-server:latest
     restart: always
