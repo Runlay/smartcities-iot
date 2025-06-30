@@ -6,7 +6,7 @@ import platform
 current_dir = os.path.abspath(os.getcwd())
 
 # Get absolute path to the /pddl folder (neighbor of src/)
-pddl_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'pddl'))
+pddl_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "pddl"))
 
 # Adjust path for Docker on Windows
 if platform.system() == "Windows":
@@ -22,11 +22,16 @@ else:
 
 # Build the Docker command
 cmd = [
-    "docker", "run", "--rm",
-    "-v", f"{docker_path}:/data",
+    "docker",
+    "run",
+    "--rm",
+    "-v",
+    f"{docker_path}:/data",
     "fast-downward",
-    "/data/domain.pddl", "/data/problem.pddl",
-    "--search", "lazy_greedy([ff()], preferred=[ff()])"
+    "/data/domain.pddl",
+    "/data/problem.pddl",
+    "--search",
+    "lazy_greedy([ff()], preferred=[ff()])",
 ]
 
 # Run the command and stream the output
