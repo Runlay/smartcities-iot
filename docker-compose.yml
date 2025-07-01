@@ -11,61 +11,78 @@ services:
       context: ./frontend
     restart: always
     ports:
-      - '80:3000'
+      - '${FRONTEND_PORT_HOST}:${FRONTEND_PORT_CONTAINER}'
+    environment:
+      - MQTT_BROKER_URL=${MQTT_BROKER_URL}
+      - MQTT_BROKER_PORT_WS=${MQTT_BROKER_PORT_WS}
+      - MQTT_BROKER_USERNAME=${MQTT_BROKER_USERNAME}
+      - MQTT_BROKER_PASSWORD=${MQTT_BROKER_PASSWORD}
+      - MQTT_ENVIRONMENT_TOPICS=${MQTT_ENVIRONMENT_TOPICS}
+      - MQTT_SENSOR_TOPICS=${MQTT_SENSOR_TOPICS}
+      - MQTT_PLANNER_TOPCS=${MQTT_PLANNER_TOPCS}
 
   rabbitmq:
     build: ./messaging
     restart: always
     ports:
-      - '1883:1883' # MQTT TCP port
-      - '15675:15675' # MQTT WebSocket port
-      - '5672:5672' # AMQP port
+      - '${MQTT_BROKER_PORT_TCP}:${MQTT_BROKER_PORT_TCP}' # MQTT TCP port
+      - '${MQTT_BROKER_PORT_WS}:${MQTT_BROKER_PORT_WS}' # MQTT WebSocket port
+      # - '5672:5672' # AMQP port (not needed?)
       - '15672:15672' # Management UI port
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     expose:
-      - 1883
-      - 15675
-      - 5672
-      - 15672
+      - ${MQTT_BROKER_PORT_TCP}
+      - ${MQTT_BROKER_PORT_WS}
+      # - 5672
+      # - 15672
 
   redis:
     build: database/
     image: redis:7
     restart: always
     ports:
-      - '6379:6379'
+      - '${REDIS_PORT}:${REDIS_PORT}'
     volumes:
       - redis_data:/data
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
     expose:
-      - 6379
+      - ${REDIS_PORT}
 
   backend:
     build: ./backend
     restart: always
-    depends_on:
-      - redis
+    # depends_on:
+    #   - redis
     environment:
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
     ports:
-      - '4000:4000'
+      - '${BACKEND_PORT}:${BACKEND_PORT}'
     expose:
-      - 4000
+      - ${BACKEND_PORT}
 
   context:
     build: ./context
     restart: always
-    depends_on:
-      - rabbitmq
+    environment:
+      - MQTT_BROKER_URL=${MQTT_BROKER_URL}
+      - MQTT_BROKER_PORT_WS=${MQTT_BROKER_PORT_WS}
+      - MQTT_BROKER_USERNAME=${MQTT_BROKER_USERNAME}
+      - MQTT_BROKER_PASSWORD=${MQTT_BROKER_PASSWORD}
+      - MQTT_ENVIRONMENT_TOPICS=${MQTT_ENVIRONMENT_TOPICS}
+      - MQTT_SENSOR_TOPICS=${MQTT_SENSOR_TOPICS}
+      - MQTT_ACTUATOR_STATE_TOPICS=${MQTT_ACTUATOR_STATE_TOPICS}
+      - MQTT_PLANNER_TOPCS=${MQTT_PLANNER_TOPCS}
+    # depends_on:
+    #   - rabbitmq
 
   planner:
     build: ./planner
     restart: always
-    depends_on:
-      - rabbitmq
+    # depends_on:
+    #   - rabbitmq
 
   fast-downward:
     build: ./planner
@@ -80,9 +97,9 @@ services:
     restart: always
     privileged: true
     ports:
-      - '5000:5000'
+      - '${GATEWAY_PORT}:${GATEWAY_PORT}'
     environment:
-      USB_PATH: '/dev/ttyACM0'
-      S0_LEGACY_KEY: '1B7405BF85999197EE1F6C58B19A9E3F'
+      USB_PATH: ${GATEWAY_USB_PATH}
+      S0_LEGACY_KEY: ${GATEWAY_S0_LEGACY_KEY}
     volumes:
       - gateway_data:/cache
