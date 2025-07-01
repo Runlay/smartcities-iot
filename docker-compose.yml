@@ -60,14 +60,6 @@ services:
     restart: always
     depends_on:
       - rabbitmq
-    environment:
-      - MQTT_BROKER=rabbitmq
-      - MQTT_PORT=1883
-      - TEMPERATURE_TARGET=22.0
-      - TEMPERATURE_TOLERANCE=2.0
-      - HUMIDITY_TARGET=50.0
-      - HUMIDITY_TOLERANCE=10.0
-      - PRESSURE_THRESHOLD=1000.0
 
   planner:
     build: ./planner
@@ -79,9 +71,9 @@ services:
     build: ./planner
     image: fast-downward
     volumes:
-      - ./problems:/problems  # directory for PDDL files
+      - ./problems:/problems # directory for PDDL files
     working_dir: /fast-downward
-    entrypoint: ["./fast-downward.py"]
+    entrypoint: ['./fast-downward.py']
 
   gateway:
     image: kpine/zwave-js-server:latest

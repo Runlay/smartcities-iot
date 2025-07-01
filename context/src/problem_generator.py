@@ -1,5 +1,5 @@
-import os
 from typing import Dict, Any
+from datetime import datetime
 
 
 class ProblemGenerator:
@@ -8,13 +8,13 @@ class ProblemGenerator:
 
     def generate_problem(self, state: Dict[str, Any], config: Dict[str, Any]) -> str:
         self.problem_counter += 1
-        problem_name = f"problem_{self.problem_counter}"
+        problem_id = f"{self.problem_counter}"
 
         init_predicates = self._generate_init_predicates(state, config)
 
         goal_predicates = self._generate_goal_predicates(state, config)
 
-        problem_content = f"""(define (problem {problem_name})
+        problem_content = f"""(define (problem {problem_id})
           (:domain smart-store)
 
           (:init
@@ -26,16 +26,11 @@ class ProblemGenerator:
           ))
         )"""
 
-        problem_file = os.path.join(
-            os.path.dirname(__file__), os.pardir, "pddl", f"{problem_name}.pddl"
-        )
-
-        os.makedirs(os.path.dirname(problem_file), exist_ok=True)
-
-        with open(problem_file, "w") as file:
-            file.write(problem_content)
-
-        return problem_file
+        return {
+            "id": problem_id,
+            "content": problem_content,
+            "timestamp": datetime.now().isoformat() + "Z",
+        }
 
     def _generate_init_predicates(
         self, state: Dict[str, Any], config: Dict[str, Any]

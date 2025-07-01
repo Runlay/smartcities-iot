@@ -9,7 +9,7 @@ config_manager = EnvironmentConfigurationManager()
 problem_generator = ProblemGenerator()
 
 
-MQTT_BROKER_URL = "localhost"
+MQTT_BROKER_URL = "rabbitmq"
 MQTT_BROKER_PORT = 1883
 MQTT_BROKER_USERNAME = "guest"
 MQTT_BROKER_PASSWORD = "guest"
@@ -33,8 +33,11 @@ def generate_plan():
     current_config = config_manager.get_config()
 
     try:
-        problem_file = problem_generator.generate_problem(current_state, current_config)
-        print(f"✓ Generated new PDDL problem: {problem_file}")
+        problem_data = problem_generator.generate_problem(current_state, current_config)
+
+        # Publish to planner/problem topic
+        client.publish("planner/problem", json.dumps(problem_data))
+        print(f"✓ Published PDDL problem to planner: {problem_data['id']}")
     except Exception as e:
         print(f"✗ Failed to generate PDDL problem: {e}")
 
