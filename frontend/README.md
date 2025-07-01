@@ -122,3 +122,13 @@ Published to corresponding sub-topics:
   "state": <boolean> // true if corresponding is currently on, false otherwise
 }
 ```
+
+## Problem Instances (publishes to `planner/problem`)
+
+```json
+{
+  "id": <string>,
+  "content": <string>,
+  "timestamp": <string (ISO 8601)
+}
+```
