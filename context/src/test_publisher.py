@@ -70,7 +70,10 @@ def publish_actuator_states(client):
     actuators = ["ac", "ventilation", "light", "alarm"]
 
     for actuator in actuators:
-        state_data = {"isOn": random.choice([True, False])}
+        state_data = {
+            "isOn": random.choice([True, False]),
+            "timestamp": datetime.now().isoformat() + "Z",
+        }
         client.publish(f"actuator/{actuator}/state", json.dumps(state_data))
         print(f"Published to actuator/{actuator}/state: {state_data}")
 
