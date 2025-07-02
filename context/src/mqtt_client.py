@@ -3,21 +3,25 @@ from state_manager import EnvironmentStateManager
 from config_manager import EnvironmentConfigurationManager
 from problem_generator import ProblemGenerator
 import json
+from dotenv import load_dotenv
+import os
+
 
 state_manager = EnvironmentStateManager()
 config_manager = EnvironmentConfigurationManager()
 problem_generator = ProblemGenerator()
 
+load_dotenv()
 
-MQTT_BROKER_URL = "rabbitmq"
-MQTT_BROKER_PORT = 1883
-MQTT_BROKER_USERNAME = "guest"
-MQTT_BROKER_PASSWORD = "guest"
+MQTT_BROKER_HOST = os.getenv("MQTT_BROKER_HOST", "localhost")
+MQTT_BROKER_PORT = int(os.getenv("MQTT_BROKER_PORT_TCP", 1883))
+MQTT_BROKER_USERNAME = os.getenv("MQTT_BROKER_USERNAME")
+MQTT_BROKER_PASSWORD = os.getenv("MQTT_BROKER_PASSWORD")
 
-MQTT_SENSOR_TOPIC = "sensor/+"
-MQTT_ACTUATOR_STATE_TOPIC = "actuator/+/state"
-MQTT_ENVIRONMENT_TOPIC = "env/+"
-MQTT_TOPICS = [MQTT_SENSOR_TOPIC, MQTT_ACTUATOR_STATE_TOPIC, MQTT_ENVIRONMENT_TOPIC]
+MQTT_SENSOR_TOPICS = os.getenv("MQTT_SENSOR_TOPICS", "sensor/+")
+MQTT_ACTUATOR_STATE_TOPICS = os.getenv("MQTT_ACTUATOR_STATE_TOPICS", "actuator/+/state")
+MQTT_ENVIRONMENT_TOPICS = os.getenv("MQTT_ENVIRONMENT_TOPICS", "env/+")
+MQTT_TOPICS = [MQTT_SENSOR_TOPICS, MQTT_ACTUATOR_STATE_TOPICS, MQTT_ENVIRONMENT_TOPICS]
 
 
 def on_connect(client, userdata, flags, reason_code, properties):
@@ -82,7 +86,7 @@ client.username_pw_set(MQTT_BROKER_USERNAME, MQTT_BROKER_PASSWORD)
 client.on_connect = on_connect
 client.on_message = on_message
 
-client.connect(MQTT_BROKER_URL, MQTT_BROKER_PORT, 60)
+client.connect(MQTT_BROKER_HOST, MQTT_BROKER_PORT, 60)
 
 
 client.loop_forever()
