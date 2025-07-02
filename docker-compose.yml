@@ -134,19 +134,11 @@ services:
     build: ./gateway
     restart: always
     privileged: true
-    ports:
-      - '8091:8091' # Web interface port
-      - '5000:5000'
     devices:
       - '/dev/serial/by-id/usb-0658_0200-if00:/dev/zwave'
     tty: true
-    stop_signal: SIGINT
-    networks:
-      - zwave
     environment:
       MQTT_SERVER: "192.168.178.90"
       USB_PATH: "/dev/ttyACM0"
-      S0_LEGACY_KEY: "1B7405BF85999197EE1F6C58B19A9E3F"
-      ZWAVEJS_EXTERNAL_CONFIG: "/usr/src/app/store/.config-db"
     volumes:
       - gateway_data:/opt/ozw/config
