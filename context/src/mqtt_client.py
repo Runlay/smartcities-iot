@@ -64,7 +64,6 @@ def on_message(client, userdata, msg):
             actuator_type = topic.split("/")[1]
             state_manager.update_actuator_state(actuator_type, payload)
             should_publish_state = True
-            should_generate_plan = True
         elif topic == "env/config":
             config_manager.update_config(payload)
             should_generate_plan = True
