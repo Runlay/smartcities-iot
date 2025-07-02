@@ -1,9 +1,9 @@
 version: '2'
 
-volumes:
-  redis_data:
-  rabbitmq_data:
-  gateway_data:
+# volumes:
+#   redis_data:
+#   rabbitmq_data:
+#   gateway_data:
 
 services:
   frontend:
@@ -11,7 +11,7 @@ services:
       context: ./frontend
     restart: always
     ports:
-      - '${FRONTEND_PORT_HOST}:${FRONTEND_PORT_CONTAINER}'
+      - '80:3000'
     environment:
       - VITE_MQTT_BROKER_HOST=${VITE_MQTT_BROKER_HOST}
       - VITE_MQTT_BROKER_PORT_WS=${VITE_MQTT_BROKER_PORT_WS}
@@ -31,15 +31,15 @@ services:
     build: ./messaging
     restart: always
     ports:
-      - '${MQTT_BROKER_PORT_TCP}:${MQTT_BROKER_PORT_TCP}' # MQTT TCP port
-      - '${MQTT_BROKER_PORT_WS}:${MQTT_BROKER_PORT_WS}' # MQTT WebSocket port
+      - '1883:1883' # MQTT TCP port
+      - '15675:15675' # MQTT WebSocket port
       # - '5672:5672' # AMQP port (not needed?)
       - '15672:15672' # Management UI port
-    volumes:
-      - rabbitmq_data:/var/lib/rabbitmq
+    # volumes:
+    #   - rabbitmq_data:/var/lib/rabbitmq
     expose:
-      - ${MQTT_BROKER_PORT_TCP}
-      - ${MQTT_BROKER_PORT_WS}
+      - 1883
+      - 15675
       # - 5672
       # - 15672
 
@@ -48,13 +48,13 @@ services:
     image: redis:7
     restart: always
     ports:
-      - '${REDIS_PORT}:${REDIS_PORT}'
-    volumes:
-      - redis_data:/data
+      - '6379:6379'
+    # volumes:
+    #   - redis_data:/data
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
     expose:
-      - ${REDIS_PORT}
+      - 6379
 
   backend:
     build: ./backend
@@ -65,9 +65,9 @@ services:
       - REDIS_HOST=${REDIS_HOST}
       - REDIS_PORT=${REDIS_PORT}
     ports:
-      - '${BACKEND_PORT}:${BACKEND_PORT}'
+      - '4000:4000'
     expose:
-      - ${BACKEND_PORT}
+      - 4000
 
   context:
     build: ./context
@@ -124,8 +124,8 @@ services:
   fast-downward:
     build: ./planner
     image: fast-downward
-    volumes:
-      - ./problems:/problems # directory for PDDL files
+    # volumes:
+    #   - ./problems:/problems # directory for PDDL files
     working_dir: /fast-downward
     entrypoint: ['./fast-downward.py']
 
@@ -134,9 +134,9 @@ services:
     restart: always
     privileged: true
     ports:
-      - '${GATEWAY_PORT}:${GATEWAY_PORT}'
+      - '5000:5000'
     environment:
       USB_PATH: ${GATEWAY_USB_PATH}
       S0_LEGACY_KEY: ${GATEWAY_S0_LEGACY_KEY}
-    volumes:
-      - gateway_data:/cache
+    # volumes:
+    #   - gateway_data:/cache
