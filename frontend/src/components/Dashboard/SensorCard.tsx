@@ -7,26 +7,48 @@ import {
 } from '@/components/ui/card';
 import { capitalize } from '@/lib/utils';
 
-import type { SensorData } from '@/types';
+import type { SensorData, SensorType } from '@/types';
 import { Thermometer, Droplets, Radar, Gauge } from 'lucide-react';
 
 interface StateCardProps {
-  sensorData: SensorData;
+  sensorType: SensorType;
+  sensorData?: SensorData;
 }
 
-const SensorCard = ({ sensorData }: StateCardProps) => {
+const SensorCard = ({ sensorType, sensorData }: StateCardProps) => {
   const getIcon = () => {
-    switch (sensorData.type) {
+    switch (sensorType) {
       case 'temperature':
-        return <Thermometer className='w-5 h-5' />;
+        return <Thermometer className='h-5 w-5' />;
       case 'humidity':
-        return <Droplets className='w-5 h-5' />;
+        return <Droplets className='h-5 w-5' />;
       case 'motion':
-        return <Radar className='w-5 h-5' />;
+        return <Radar className='h-5 w-5' />;
       case 'pressure':
-        return <Gauge className='w-5 h-5' />;
+        return <Gauge className='h-5 w-5' />;
     }
   };
+
+  if (!sensorData) {
+    return (
+      <Card className='hover:border-muted-foreground transition-all'>
+        <CardHeader>
+          <CardTitle className='flex items-center gap-2'>
+            {getIcon()}
+            <h3>{capitalize(sensorType)}</h3>
+          </CardTitle>
+        </CardHeader>
+
+        <CardContent>
+          <span className='text-muted-foreground'>No data available yet</span>
+        </CardContent>
+
+        <CardFooter className='text-muted-foreground text-sm'>
+          Last updated: -
+        </CardFooter>
+      </Card>
+    );
+  }
 
   const timestamp = new Date(sensorData.timestamp).toLocaleTimeString();
 
@@ -36,7 +58,7 @@ const SensorCard = ({ sensorData }: StateCardProps) => {
   }
 
   return (
-    <Card className='transition-all hover:border-muted-foreground'>
+    <Card className='hover:border-muted-foreground transition-all'>
       <CardHeader>
         <CardTitle className='flex items-center gap-2'>
           {getIcon()}
@@ -48,15 +70,15 @@ const SensorCard = ({ sensorData }: StateCardProps) => {
         <div>
           <span className='text-2xl font-semibold'>
             {value}
-            <span className='text-lg text-muted-foreground ml-1'>
+            <span className='text-muted-foreground ml-1 text-lg'>
               {sensorData.unit}
             </span>
           </span>
         </div>
       </CardContent>
 
-      <CardFooter className='text-sm text-muted-foreground'>
-        {timestamp}
+      <CardFooter className='text-muted-foreground text-sm'>
+        Last updated: {timestamp}
       </CardFooter>
     </Card>
   );

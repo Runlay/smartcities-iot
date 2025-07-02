@@ -1,24 +1,24 @@
 export type EnvironmentState = {
   sensors: {
-    temperature: {
+    temperature?: {
       value: string;
       unit: string;
       timestamp: string;
       instanceId: string;
     };
-    humidity: {
+    humidity?: {
       value: string;
       unit: string;
       timestamp: string;
       instanceId: string;
     };
-    motion: {
+    motion?: {
       value: string;
       unit: string;
       timestamp: string;
       instanceId: string;
     };
-    pressure: {
+    pressure?: {
       value: string;
       unit: string;
       timestamp: string;
@@ -26,22 +26,22 @@ export type EnvironmentState = {
     };
   };
   actuators: {
-    ac: {
+    ac?: {
       isOn: boolean;
       timestamp: string;
       instanceId: string;
     };
-    ventilation: {
+    ventilation?: {
       isOn: boolean;
       timestamp: string;
       instanceId: string;
     };
-    light: {
+    light?: {
       isOn: boolean;
       timestamp: string;
       instanceId: string;
     };
-    pressure: {
+    alarm?: {
       isOn: boolean;
       timestamp: string;
       instanceId: string;
@@ -49,8 +49,10 @@ export type EnvironmentState = {
   };
 };
 
+export type SensorType = 'temperature' | 'humidity' | 'motion' | 'pressure';
+
 export type SensorData = {
-  type: 'temperature' | 'humidity' | 'motion' | 'pressure';
+  type: SensorType;
   value: string;
   unit: string;
   timestamp: string;
@@ -62,8 +64,10 @@ export type RawSensorData = {
   jsonPayload: string;
 };
 
+export type ActuatorType = 'ac' | 'ventilation' | 'light' | 'alarm';
+
 export type ActuatorData = {
-  type: 'ac' | 'ventilation' | 'light' | 'alarm';
+  type: ActuatorType;
   isOn: boolean;
   timestamp: string;
   instanceId: string;

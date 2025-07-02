@@ -2,27 +2,19 @@ import ActuatorCard from '@/components/Dashboard/ActuatorCard';
 import SensorCard from '@/components/Dashboard/SensorCard';
 import PageInfo from '@/components/PageInfo';
 import PageSection from '@/components/PageSection';
-import type { SensorData, ActuatorData } from '@/types';
+import type { SensorType, ActuatorType } from '@/types';
 import { useEnvironmentStore } from '@/store/environment-store';
+
+const SENSOR_TYPES: SensorType[] = [
+  'temperature',
+  'humidity',
+  'motion',
+  'pressure',
+];
+const ACTUATOR_TYPES: ActuatorType[] = ['ac', 'ventilation', 'light', 'alarm'];
 
 const DashboardPage = () => {
   const { environmentState } = useEnvironmentStore();
-
-  // Convert sensor object to array with type information
-  const sensorData: SensorData[] = Object.entries(environmentState.sensors).map(
-    ([type, data]) => ({
-      type: type as SensorData['type'],
-      ...data,
-    })
-  );
-
-  // Convert actuator object to array with type information
-  const actuatorData: ActuatorData[] = Object.entries(
-    environmentState.actuators
-  ).map(([type, data]) => ({
-    type: type as ActuatorData['type'],
-    ...data,
-  }));
 
   return (
     <>
@@ -33,18 +25,33 @@ const DashboardPage = () => {
 
       <PageSection title='Sensors'>
         <div className='grid grid-cols-4 gap-4'>
-          {sensorData.map((sensor) => (
-            <SensorCard key={sensor.instanceId} sensorData={sensor} />
-          ))}
+          {SENSOR_TYPES.map((type) => {
+            const data = environmentState.sensors[type];
+
+            return (
+              <SensorCard
+                key={type}
+                sensorType={type}
+                sensorData={data ? { type, ...data } : undefined}
+              />
+            );
+          })}
         </div>
       </PageSection>
 
       <PageSection title='Actuators'>
-        {' '}
         <div className='grid grid-cols-4 gap-4'>
-          {actuatorData.map((actuator) => (
-            <ActuatorCard key={actuator.instanceId} actuatorData={actuator} />
-          ))}
+          {ACTUATOR_TYPES.map((type) => {
+            const data = environmentState.actuators[type];
+
+            return (
+              <ActuatorCard
+                key={type}
+                actuatorType={type}
+                actuatorData={data ? { type, ...data } : undefined}
+              />
+            );
+          })}
         </div>
       </PageSection>
     </>

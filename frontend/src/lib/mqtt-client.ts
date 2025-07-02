@@ -1,16 +1,24 @@
 import mqtt from 'mqtt';
 
-const MQTT_BROKER_URL = 'ws://localhost:15675/ws';
-const MQTT_SENSOR_TOPICS = 'sensor/+';
-const MQTT_ACTUATOR_TOPICS = 'actuator/+';
-const MQTT_ENVIRONMENT_TOPICS = 'env/+';
-const MQTT_PLAN_TOPICS = 'planner/+';
+const VITE_MQTT_BROKER_HOST =
+  import.meta.env.VITE_MQTT_BROKER_HOST || 'localhost';
+const VITE_MQTT_BROKER_PORT_WS =
+  import.meta.env.VITE_MQTT_BROKER_PORT_WS || 15675;
+const VITE_MQTT_BROKER_URL = `ws://${VITE_MQTT_BROKER_HOST}:${VITE_MQTT_BROKER_PORT_WS}/ws`;
+const VITE_MQTT_BROKER_USERNMAE = import.meta.env.VITE_MQTT_BROKER_USERNAME;
+const VITE_MQTT_BROKER_PASSWORD = import.meta.env.VITE_MQTT_BROKER_PASSWORD;
+
+const VITE_MQTT_SENSOR_TOPICS =
+  import.meta.env.VITE_MQTT_SENSOR_TOPICS || 'sensor/+';
+const VITE_MQTT_ENVIRONMENT_TOPICS =
+  import.meta.env.VITE_MQTT_ENVIRONMENT_TOPICS || 'env/+';
+const VITE_MQTT_PLANNER_TOPICS =
+  import.meta.env.VITE_MQTT_PLANNER_TOPICS || 'planner/+';
 
 const TOPICS = [
-  MQTT_SENSOR_TOPICS,
-  MQTT_ACTUATOR_TOPICS,
-  MQTT_ENVIRONMENT_TOPICS,
-  MQTT_PLAN_TOPICS,
+  VITE_MQTT_SENSOR_TOPICS,
+  VITE_MQTT_ENVIRONMENT_TOPICS,
+  VITE_MQTT_PLANNER_TOPICS,
 ];
 
 interface MessageHandler {
@@ -34,13 +42,13 @@ class MqttClient {
 
     console.log('Connecting to MQTT broker...');
 
-    this.client = mqtt.connect(MQTT_BROKER_URL, {
-      username: 'guest',
-      password: 'guest',
+    this.client = mqtt.connect(VITE_MQTT_BROKER_URL, {
+      username: VITE_MQTT_BROKER_USERNMAE,
+      password: VITE_MQTT_BROKER_PASSWORD,
     });
 
     this.client.on('connect', () => {
-      console.log(`Connected to MQTT broker using URL ${MQTT_BROKER_URL}`);
+      console.log(`Connected to MQTT broker using URL ${VITE_MQTT_BROKER_URL}`);
       this.isConnected = true;
 
       this.client!.subscribe(TOPICS, (err) => {

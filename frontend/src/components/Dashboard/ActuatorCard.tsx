@@ -7,26 +7,48 @@ import {
 } from '@/components/ui/card';
 import { capitalize } from '@/lib/utils';
 
-import type { ActuatorData } from '@/types';
+import type { ActuatorData, ActuatorType } from '@/types';
 import { Lightbulb, Bell, AirVent, Fan } from 'lucide-react';
 
 interface ActuatorCardProps {
-  actuatorData: ActuatorData;
+  actuatorType: ActuatorType;
+  actuatorData?: ActuatorData;
 }
 
-const ActuatorCard = ({ actuatorData }: ActuatorCardProps) => {
+const ActuatorCard = ({ actuatorType, actuatorData }: ActuatorCardProps) => {
   const getIcon = () => {
-    switch (actuatorData.type) {
+    switch (actuatorType) {
       case 'ac':
-        return <AirVent className='w-5 h-5' />;
+        return <AirVent className='h-5 w-5' />;
       case 'ventilation':
-        return <Fan className='w-5 h-5' />;
+        return <Fan className='h-5 w-5' />;
       case 'light':
-        return <Lightbulb className='w-5 h-5' />;
+        return <Lightbulb className='h-5 w-5' />;
       case 'alarm':
-        return <Bell className='w-5 h-5' />;
+        return <Bell className='h-5 w-5' />;
     }
   };
+
+  if (!actuatorData) {
+    return (
+      <Card className='hover:border-muted-foreground transition-all'>
+        <CardHeader>
+          <CardTitle className='flex items-center gap-2'>
+            {getIcon()}
+            <h3>{actuatorType === 'ac' ? 'AC' : capitalize(actuatorType)}</h3>
+          </CardTitle>
+        </CardHeader>
+
+        <CardContent>
+          <span className='text-muted-foreground'>No data available yet</span>
+        </CardContent>
+
+        <CardFooter className='text-muted-foreground text-sm'>
+          Last updated: -
+        </CardFooter>
+      </Card>
+    );
+  }
 
   let title = capitalize(actuatorData.type);
   if (actuatorData.type === 'ac') {
@@ -38,7 +60,7 @@ const ActuatorCard = ({ actuatorData }: ActuatorCardProps) => {
   const timestamp = new Date(actuatorData.timestamp).toLocaleTimeString();
 
   return (
-    <Card className='transition-all hover:border-muted-foreground'>
+    <Card className='hover:border-muted-foreground transition-all'>
       <CardHeader>
         <CardTitle className='flex items-center gap-2'>
           {getIcon()}
@@ -58,7 +80,7 @@ const ActuatorCard = ({ actuatorData }: ActuatorCardProps) => {
         </div>
       </CardContent>
 
-      <CardFooter className='text-sm text-muted-foreground'>
+      <CardFooter className='text-muted-foreground text-sm'>
         {timestamp}
       </CardFooter>
     </Card>
