@@ -81,7 +81,7 @@ const ActuatorCard = ({ actuatorType, actuatorData }: ActuatorCardProps) => {
       </CardContent>
 
       <CardFooter className='text-muted-foreground text-sm'>
-        {timestamp}
+        Last updated: {timestamp}
       </CardFooter>
     </Card>
   );
