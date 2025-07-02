@@ -1,23 +1,14 @@
 import { create } from 'zustand';
-import type { Plan, PlanStep } from '@/types';
+import type { Plan } from '@/types';
 import { addMqttMessagehandler } from '@/lib/mqtt-client';
 
-const INITIAL_PLAN_STEPS: PlanStep[] = [];
-
-const INITIAL_PLAN: Plan = {
-  id: '',
-  status: 'pending',
-  steps: INITIAL_PLAN_STEPS,
-  createdAt: new Date().toISOString(),
-};
-
 interface PlanStore {
-  currentPlan: Plan;
+  currentPlan?: Plan;
   setPlan: (plan: Plan) => void;
 }
 
 export const usePlanStore = create<PlanStore>((set) => ({
-  currentPlan: INITIAL_PLAN,
+  currentPlan: undefined,
   setPlan: (plan: Plan) => set({ currentPlan: plan }),
 }));
 
