@@ -1,16 +1,10 @@
-FROM node:20-alpine
+FROM python:3.13-slim
 
-# Set working directory
- WORKDIR /app
+WORKDIR /app
 
-# Copy files
-COPY index.js .
-COPY package.json .
+RUN pip install paho-mqtt
 
-# # Install dependencies
-RUN npm install
+# Copy project files
+COPY app.py .
 
-RUN apk add --no-cache usbutils udev
-
-# Start script
-CMD ["node", "index.js"]
+CMD ["python", "app.py"]

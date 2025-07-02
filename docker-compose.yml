@@ -130,8 +130,8 @@ services:
     entrypoint: ['./fast-downward.py']
 
   gateway:
-    image: zwavejs/zwave-js-ui:latest
-    #build: ./gateway
+    image: openzwave/ozwdaemon:latest
+    build: ./gateway
     restart: always
     privileged: true
     ports:
@@ -144,11 +144,9 @@ services:
     networks:
       - zwave
     environment:
+      MQTT_SERVER: "192.168.178.90"
       USB_PATH: "/dev/ttyACM0"
       S0_LEGACY_KEY: "1B7405BF85999197EE1F6C58B19A9E3F"
       ZWAVEJS_EXTERNAL_CONFIG: "/usr/src/app/store/.config-db"
     volumes:
-      - gateway_data:/usr/src/app/store
-    expose:
-      - 8091
-     # - 3000
+      - gateway_data:/opt/ozw/config
