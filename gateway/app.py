@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime as dt
 import json
 import os
 import random
@@ -14,16 +14,19 @@ def generate_json(sensor_type, value_key, value, unit):
     return {
         "type-id": f"de.uni-stuttgart.sciot.aeon/{sensor_type}",
         "instance-id": f"0x{random.randint(100000000, 999999999):x}",
-        "timestamp": datetime.now().isoformat() + "Z",
+        "timestamp": dt.now().isoformat() + "Z",
         "value": {value_key: str(value)},
     }
 
 def transform_message(client, userdata, msg):
+    payload = msg.payload.decode("utf-8")
+    data = json.loads(payload)
+
     sensor_type = ''
     value_key = ''
-    value = msg['Value']
+    value = data['Value']
 
-    match msg['Label']:
+    match data['Label']:
         case 'Illuminance':
             sensor_type = 'illuminance'
             value_key = 'lux'
@@ -43,7 +46,9 @@ def transform_message(client, userdata, msg):
         case _:
             return
 
-    msg_out = generate_json(sensor_type, value_key, value, msg['Units'])
+    print(f'Message Received: {sensor_type}')
+
+    msg_out = generate_json(sensor_type, value_key, value, data['Units'])
     client.publish(topic_out + sensor_type, json.dumps(msg_out))
 
 def connect_mqtt():
