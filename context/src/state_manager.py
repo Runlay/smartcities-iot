@@ -1,8 +1,11 @@
 from typing import Dict, Any
+from datetime import datetime
 
 
 class EnvironmentStateManager:
     def __init__(self):
+        timestamp = datetime.now().isoformat()
+
         self.state = {
             "sensors": {
                 "temperature": None,
@@ -11,10 +14,26 @@ class EnvironmentStateManager:
                 "pressure": None,
             },
             "actuators": {
-                "ac": None,
-                "ventilation": None,
-                "light": None,
-                "alarm": None,
+                "ac": {
+                    "isOn": False,
+                    "timestamp": timestamp,
+                    "instanceId": "default-ac",
+                },
+                "ventilation": {
+                    "isOn": False,
+                    "timestamp": timestamp,
+                    "instanceId": "default-ventilation",
+                },
+                "light": {
+                    "isOn": False,
+                    "timestamp": timestamp,
+                    "instanceId": "default-light",
+                },
+                "alarm": {
+                    "isOn": False,
+                    "timestamp": timestamp,
+                    "instanceId": "default-alarm",
+                },
             },
         }
 

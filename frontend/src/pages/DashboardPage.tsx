@@ -48,7 +48,7 @@ const DashboardPage = () => {
               <ActuatorCard
                 key={type}
                 actuatorType={type}
-                actuatorData={data ? { type, ...data } : undefined}
+                actuatorData={{ type, ...data }}
               />
             );
           })}

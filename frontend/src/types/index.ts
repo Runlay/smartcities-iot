@@ -26,22 +26,22 @@ export type EnvironmentState = {
     };
   };
   actuators: {
-    ac?: {
+    ac: {
       isOn: boolean;
       timestamp: string;
       instanceId: string;
     };
-    ventilation?: {
+    ventilation: {
       isOn: boolean;
       timestamp: string;
       instanceId: string;
     };
-    light?: {
+    light: {
       isOn: boolean;
       timestamp: string;
       instanceId: string;
     };
-    alarm?: {
+    alarm: {
       isOn: boolean;
       timestamp: string;
       instanceId: string;

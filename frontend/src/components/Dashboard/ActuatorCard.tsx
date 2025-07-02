@@ -12,7 +12,7 @@ import { Lightbulb, Bell, AirVent, Fan } from 'lucide-react';
 
 interface ActuatorCardProps {
   actuatorType: ActuatorType;
-  actuatorData?: ActuatorData;
+  actuatorData: ActuatorData;
 }
 
 const ActuatorCard = ({ actuatorType, actuatorData }: ActuatorCardProps) => {
@@ -28,27 +28,6 @@ const ActuatorCard = ({ actuatorType, actuatorData }: ActuatorCardProps) => {
         return <Bell className='h-5 w-5' />;
     }
   };
-
-  if (!actuatorData) {
-    return (
-      <Card className='hover:border-muted-foreground transition-all'>
-        <CardHeader>
-          <CardTitle className='flex items-center gap-2'>
-            {getIcon()}
-            <h3>{actuatorType === 'ac' ? 'AC' : capitalize(actuatorType)}</h3>
-          </CardTitle>
-        </CardHeader>
-
-        <CardContent>
-          <span className='text-muted-foreground'>No data available yet</span>
-        </CardContent>
-
-        <CardFooter className='text-muted-foreground text-sm'>
-          Last updated: -
-        </CardFooter>
-      </Card>
-    );
-  }
 
   let title = capitalize(actuatorData.type);
   if (actuatorData.type === 'ac') {
