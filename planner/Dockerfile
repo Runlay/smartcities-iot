@@ -10,6 +10,7 @@ RUN apt-get update && \
     make \
     python3 \
     git \
+    sudo \
     && rm -rf /var/lib/apt/lists/*
 
 # Set GCC 11 as default

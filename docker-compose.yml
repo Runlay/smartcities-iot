@@ -1,9 +1,10 @@
 version: '2'
 
-# volumes:
-#   redis_data:
-#   rabbitmq_data:
-#   gateway_data:
+volumes:
+  redis_data:
+  rabbitmq_data:
+  gateway_data:
+  pddl_data:
 
 services:
   frontend:
@@ -115,19 +116,31 @@ services:
       - DEFAULT_HUMIDITY_INCREASE_RATE=${DEFAULT_HUMIDITY_INCREASE_RATE}
       - DEFAULT_HUMIDITY_DECREASE_RATE=${DEFAULT_HUMIDITY_DECREASE_RATE}
 
-  planner:
-    build: ./planner
-    restart: always
-    # depends_on:
-    #   - rabbitmq
-
   fast-downward:
     build: ./planner
     image: fast-downward
-    # volumes:
-    #   - ./problems:/problems # directory for PDDL files
+    volumes:
+      - pddl_data:/data # directory for PDDL files
     working_dir: /fast-downward
     entrypoint: ['./fast-downward.py']
+
+  orchestration:
+    build: ./orchestration
+    restart: always
+    volumes:  
+      - pddl_data:/data # directory for PDDL files
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - rabbitmq
+    environment:
+      - MQTT_BROKER_HOST=${MQTT_BROKER_HOST}
+      - MQTT_BROKER_PORT_TCP=${MQTT_BROKER_PORT_TCP}
+      - MQTT_BROKER_USERNAME=${MQTT_BROKER_USERNAME}
+      - MQTT_BROKER_PASSWORD=${MQTT_BROKER_PASSWORD}
+      - MQTT_ENVIRONMENT_TOPICS=${MQTT_ENVIRONMENT_TOPICS}
+      - MQTT_SENSOR_TOPICS=${MQTT_SENSOR_TOPICS}
+      - MQTT_ACTUATOR_STATE_TOPICS=${MQTT_ACTUATOR_STATE_TOPICS}
+      - MQTT_PLANNER_TOPCS=${MQTT_PLANNER_TOPCS}
 
   gateway:
     image: openzwave/ozwdaemon:latest
