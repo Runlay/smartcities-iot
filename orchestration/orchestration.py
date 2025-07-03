@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 import os
 from planner import run_fd_docker
 import subprocess
+from datetime import datetime
 
 load_dotenv()
 
@@ -27,8 +28,6 @@ def on_connect(client, userdata, flags, reason_code, properties):
     print(f"Subscribed to topics: {MQTT_TOPICS}")
 
 
-
-
 def on_message(client, userdata, msg):
     try:
         payload = json.loads(msg.payload.decode())
@@ -48,23 +47,46 @@ def on_message(client, userdata, msg):
                 subprocess.run(["cp", "/orchestration/domain.pddl", domain_file], check=True)
                 print(f"Copied domain.pddl to {domain_file}")
             
-
-           
-            
             plan = run_fd_docker()
+            timestamp = datetime.now().isoformat()
+            
             if plan is not None:
                 for action in plan:
-                    print(f"Action: {action}")
+                    action = action.split()[0]
+                    actuator, command = action.rsplit('-', 1)
 
-                    # publish the action for the corresponding actuator
-                
-                    # actuator_topic = f"actuator/{action['actuator']}/command"
-                    # command_payload = {
-                    #     "command": action["command"],
-                    #     "timestamp": action["timestamp"],
-                    # }
-                    # client.publish(actuator_topic, json.dumps(command_payload))
-                    # print(f"Published to {actuator_topic}: {command_payload}")
+                    match actuator:
+                        case "turn-light":
+                            command_payload = {
+                                "command": command.upper(),
+                                "timestamp": timestamp
+                            }
+                            client.publish("actuator/light/command", json.dumps(command_payload))
+                            print(f"Published command to actuator/light/command: {command_payload}")
+                            
+                        case "turn-ventilation":
+                            command_payload = {
+                                "command": command.upper(),
+                                "timestamp": timestamp
+                            }
+                            client.publish("actuator/ventilation/command", json.dumps(command_payload))
+                            print(f"Published command to actuator/ventilation/command: {command_payload}")
+
+                        case "turn-ac":
+                            command_payload = {
+                                "command": command.upper(),
+                                "timestamp": timestamp
+                            }
+                            client.publish("actuator/ac/command", json.dumps(command_payload))
+                            print(f"Published command to actuator/ac/command: {command_payload}")
+
+                        case "turn-alarm":
+                            command_payload = {
+                                "command": command.upper(),
+                                "timestamp": timestamp
+                            }
+                            client.publish("actuator/alarm/command", json.dumps(command_payload))
+                            print(f"Published command to actuator/alarm/command: {command_payload}")
             
 
     except json.JSONDecodeError:

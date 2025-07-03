@@ -21,7 +21,26 @@ def run_fd_docker():
 
     try:
         result = subprocess.run(cmd, check=True, text=True, capture_output=True)
-        return result.stdout.splitlines()
+        # Extract the plan from stdout
+        plan_lines = []
+        lines = result.stdout.splitlines()
+        collecting = False
+
+        for line in lines:
+            if "Solution found!" in line:
+                collecting = True
+                continue
+            if collecting:
+                stripped = line.strip()
+                # Only collect lines that look like action lines
+                if stripped and not stripped.startswith("[") and not stripped.startswith("Plan"):
+                    if "  (" in stripped or stripped.endswith(")") or "-" in stripped:
+                        plan_lines.append(stripped)
+                elif stripped.startswith("Plan length") or "search exit code" in stripped:
+                    break  # stop collecting
+
+        print("\n".join(plan_lines))
+        return plan_lines
     except subprocess.CalledProcessError as e:
         print("❌ Fehler beim Ausführen von Fast Downward:")
         print("STDOUT:\n", e.stdout)
