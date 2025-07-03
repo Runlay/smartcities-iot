@@ -111,7 +111,7 @@ Published to corresponding sub-topics:
 
 ```json
 {
-  "command": <boolean> // true if corresponding should be turned on, false otherwise
+  "command": <string> // "ON" if corresponding should be turned on, "OFF" otherwise
 }
 ```
 
@@ -119,7 +119,7 @@ Published to corresponding sub-topics:
 
 ```json
 {
-  "state": <boolean> // true if corresponding is currently on, false otherwise
+  "state": <string> // "ON" if corresponding is currently on, "OFF" otherwise
 }
 ```
 
