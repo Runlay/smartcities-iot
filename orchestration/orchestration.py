@@ -13,8 +13,6 @@ MQTT_BROKER_PORT = int(os.getenv("MQTT_BROKER_PORT_TCP", 1883))
 MQTT_BROKER_USERNAME = os.getenv("MQTT_BROKER_USERNAME")
 MQTT_BROKER_PASSWORD = os.getenv("MQTT_BROKER_PASSWORD")
 
-MQTT_SENSOR_TOPICS = os.getenv("MQTT_SENSOR_TOPICS", "sensor/+")
-MQTT_ACTUATOR_STATE_TOPICS = os.getenv("MQTT_ACTUATOR_STATE_TOPICS", "actuator/+/state")
 MQTT_PLANNER_PROBLEM_TOPIC = "planner/problem"
 MQTT_TOPICS = [MQTT_PLANNER_PROBLEM_TOPIC]
 
@@ -49,7 +47,7 @@ def on_message(client, userdata, msg):
             
             plan = run_fd_docker()
             timestamp = datetime.now().isoformat()
-            
+
             if plan is not None:
                 for action in plan:
                     action = action.split()[0]
