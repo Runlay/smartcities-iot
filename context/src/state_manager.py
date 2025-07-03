@@ -15,22 +15,22 @@ class EnvironmentStateManager:
             },
             "actuators": {
                 "ac": {
-                    "isOn": False,
+                    "isOn": "OFF",
                     "timestamp": timestamp,
                     "instanceId": "default-ac",
                 },
                 "ventilation": {
-                    "isOn": False,
+                    "isOn": "OFF",
                     "timestamp": timestamp,
                     "instanceId": "default-ventilation",
                 },
                 "light": {
-                    "isOn": False,
+                    "isOn": "OFF",
                     "timestamp": timestamp,
                     "instanceId": "default-light",
                 },
                 "alarm": {
-                    "isOn": False,
+                    "isOn": "OFF",
                     "timestamp": timestamp,
                     "instanceId": "default-alarm",
                 },
@@ -45,7 +45,10 @@ class EnvironmentStateManager:
 
     def update_actuator_state(self, actuator_type: str, data: Dict[str, Any]) -> None:
         if actuator_type in self.state["actuators"]:
-            self.state["actuators"][actuator_type] = data
+            # Map "state" to "isOn" for internal consistency
+            if "state" in data:
+                data["isOn"] = data.pop("state")
+            self.state["actuators"][actuator_type].update(data)
         else:
             raise ValueError(f"Unknown actuator type: {actuator_type}")
 

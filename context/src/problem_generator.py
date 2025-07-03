@@ -83,7 +83,7 @@ class ProblemGenerator:
         # === ACTUATOR PREDICATES ===
 
         # AC
-        if state["actuators"]["ac"] and state["actuators"]["ac"]["isOn"]:
+        if state["actuators"]["ac"] and state["actuators"]["ac"]["isOn"] == "ON":
             init_predicates.append("    (ac-on)")
         else:
             init_predicates.append("    (ac-off)")
@@ -91,20 +91,20 @@ class ProblemGenerator:
         # Ventilation
         if (
             state["actuators"]["ventilation"]
-            and state["actuators"]["ventilation"]["isOn"]
+            and state["actuators"]["ventilation"]["isOn"] == "ON"
         ):
             init_predicates.append("    (ventilation-on)")
         else:
             init_predicates.append("    (ventilation-off)")
 
         # Light
-        if state["actuators"]["light"] and state["actuators"]["light"]["isOn"]:
+        if state["actuators"]["light"] and state["actuators"]["light"]["isOn"] == "ON":
             init_predicates.append("    (light-on)")
         else:
             init_predicates.append("    (light-off)")
 
         # Alarm
-        if state["actuators"]["alarm"] and state["actuators"]["alarm"]["isOn"]:
+        if state["actuators"]["alarm"] and state["actuators"]["alarm"]["isOn"] == "ON":
             init_predicates.append("    (alarm-on)")
         else:
             init_predicates.append("    (alarm-off)")
