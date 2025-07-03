@@ -61,7 +61,9 @@ class SimulatedSensor:
 
     def simulate(self):
         while True:
-            if self.actuator.state:  # Actuator ON: decrease value toward normal range
+            if (
+                self.actuator.state == "ON"
+            ):  # Actuator ON: decrease value toward normal range
                 if self.value > self.max_value:
                     self.value = max(self.value - self.decrease_rate, self.max_value)
                 elif self.value < self.min_value:

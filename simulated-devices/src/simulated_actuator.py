@@ -4,7 +4,7 @@ import json
 class SimulatedActuator:
     def __init__(self, type):
         self.type = type
-        self.state = False
+        self.state = "OFF"
         self.mqtt_client = None
 
     def set_mqtt_client(self, mqtt_client):
@@ -16,7 +16,7 @@ class SimulatedActuator:
     def on_message(self, client, userdata, message):
         if message.topic == f"actuator/{self.type}/command":
             payload = json.loads(message.payload.decode())
-            new_state = bool(payload.get("command", False))
+            new_state = payload.get("command", "OFF")
             if new_state != self.state:
                 self.state = new_state
                 self.publish_state()
