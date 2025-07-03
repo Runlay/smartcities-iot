@@ -3,9 +3,14 @@ import json
 import os
 import random
 import paho.mqtt.client as mqtt
+from gpiozero import RGBLED, Buzzer, Device
+from gpiozero.pins.native import NativeFactory
+from time import sleep
 
 mqtt_server = os.getenv("MQTT_SERVER", "localhost")
 mqtt_port = int(os.getenv("MQTT_PORT", "1883"))
+
+Device.pin_factory = NativeFactory()
 
 topic_in = 'OpenZWave/1/#'
 topic_out = 'sensor/'
@@ -51,20 +56,36 @@ def transform_message(client, userdata, msg):
     msg_out = generate_json(sensor_type, value_key, value, data['Units'])
     client.publish(topic_out + sensor_type, json.dumps(msg_out))
 
-def connect_mqtt():
+def connect_mqtt(topic, on_message):
     def on_connect(client, userdata, flags, rc, properties):
         if rc == 0:
-            print("Connected to MQTT Broker!")
+            print("Connected to MQTT: " + topic)
         else:
             print("Failed to connect, return code %d\n", rc)
 
     client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
     client.on_connect = on_connect
     client.connect(mqtt_server, mqtt_port)
-    client.subscribe(topic_in)
-    client.on_message = transform_message
-    client.loop_forever()
+    client.subscribe(topic)
+    client.on_message = on_message
+    client.loop_start()
     return client
 
+def blink_led(client, userdata, msg):
+    led = RGBLED(red=17, green=18, blue=19, pwm=False)
+    led.blink(n=3)
+
+def alarm(client, userdata, msg):
+    bz = Buzzer(2)
+    bz.beep(n=3)
+
+def main():
+    connect_mqtt(topic_in, transform_message)
+    connect_mqtt('actuator/light/command', blink_led)
+    connect_mqtt('actuator/alarm/command', alarm)
+
+    while True:
+        pass
+
 if __name__ == '__main__':
-    connect_mqtt()
+    main()
