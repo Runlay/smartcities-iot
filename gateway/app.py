@@ -11,6 +11,8 @@ mqtt_server = os.getenv("MQTT_SERVER", "localhost")
 mqtt_port = int(os.getenv("MQTT_PORT", "1883"))
 
 Device.pin_factory = NativeFactory()
+led = RGBLED(red=17, green=18, blue=19, pwm=False)
+bz = Buzzer(2)
 
 topic_in = 'OpenZWave/1/#'
 topic_out = 'sensor/'
@@ -71,17 +73,27 @@ def connect_mqtt(topic, on_message):
     client.loop_start()
     return client
 
-def blink_led(client, userdata, msg):
-    led = RGBLED(red=17, green=18, blue=19, pwm=False)
-    led.blink(n=3)
+def light(client, userdata, msg):
+    payload = msg.payload.decode("utf-8")
+    data = json.loads(payload)
+
+    if data['command'] == 'ON':
+        led.on()
+    elif data['command'] == 'OFF':
+        led.off()
 
 def alarm(client, userdata, msg):
-    bz = Buzzer(2)
-    bz.beep(n=3)
+    payload = msg.payload.decode("utf-8")
+    data = json.loads(payload)
+
+    if data['command'] == 'ON':
+        bz.beep()
+    elif data['command'] == 'OFF':
+        bz.off()
 
 def main():
     connect_mqtt(topic_in, transform_message)
-    connect_mqtt('actuator/light/command', blink_led)
+    connect_mqtt('actuator/light/command', light)
     connect_mqtt('actuator/alarm/command', alarm)
 
     while True:
