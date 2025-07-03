@@ -7,14 +7,14 @@ const timestamp = new Date().toISOString();
 const INITIAL_ENVIRONMENT_STATE: EnvironmentState = {
   sensors: {},
   actuators: {
-    ac: { isOn: false, timestamp: timestamp, instanceId: 'default-ac' },
+    ac: { isOn: 'OFF', timestamp: timestamp, instanceId: 'default-ac' },
     ventilation: {
-      isOn: false,
+      isOn: 'OFF',
       timestamp: timestamp,
       instanceId: 'default-ventilation',
     },
-    light: { isOn: false, timestamp: timestamp, instanceId: 'default-light' },
-    alarm: { isOn: false, timestamp: timestamp, instanceId: 'default-alarm' },
+    light: { isOn: 'OFF', timestamp: timestamp, instanceId: 'default-light' },
+    alarm: { isOn: 'OFF', timestamp: timestamp, instanceId: 'default-alarm' },
   },
 };
 

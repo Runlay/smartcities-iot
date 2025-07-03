@@ -34,8 +34,6 @@ const ActuatorCard = ({ actuatorType, actuatorData }: ActuatorCardProps) => {
     title = 'AC';
   }
 
-  const value = actuatorData.isOn ? 'On' : 'Off';
-
   const timestamp = new Date(actuatorData.timestamp).toLocaleTimeString();
 
   return (
@@ -51,10 +49,10 @@ const ActuatorCard = ({ actuatorType, actuatorData }: ActuatorCardProps) => {
         <div>
           <span
             className={`text-2xl font-semibold uppercase ${
-              !actuatorData.isOn ? 'text-muted-foreground' : undefined
+              actuatorData.isOn === 'OFF' ? 'text-muted-foreground' : undefined
             }`}
           >
-            {value}
+            {actuatorData.isOn}
           </span>
         </div>
       </CardContent>
