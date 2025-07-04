@@ -18,6 +18,7 @@ MQTT_TOPICS = [MQTT_PLANNER_PROBLEM_TOPIC]
 
 PDDL_OUTPUT_PATH = "/data"
 
+
 def on_connect(client, userdata, flags, reason_code, properties):
     print(f"Connected with result code {reason_code}")
 
@@ -34,58 +35,99 @@ def on_message(client, userdata, msg):
         if topic.startswith("planner"):
             print(f"{topic} received: {payload}")
             # save the problem to a file
-            file = PDDL_OUTPUT_PATH+"/problem.pddl"
+            file = PDDL_OUTPUT_PATH + "/problem.pddl"
             with open(file, "w") as f:
                 f.write(payload["content"])
-        
-            # copy domain.pddl to the same folder the file needs to be loaded first 
+
+            # copy domain.pddl to the same folder the file needs to be loaded first
             domain_file = PDDL_OUTPUT_PATH + "/domain.pddl"
             if not os.path.exists(domain_file):
                 # copy the domain.pddl file from the orchestration folder to the PDDL_OUTPUT_PATH
-                subprocess.run(["cp", "/orchestration/domain.pddl", domain_file], check=True)
+                subprocess.run(
+                    ["cp", "/orchestration/domain.pddl", domain_file], check=True
+                )
                 print(f"Copied domain.pddl to {domain_file}")
-            
+
             plan = run_fd_docker()
             timestamp = datetime.now().isoformat()
 
             if plan is not None:
+                plan_steps = []
+
                 for action in plan:
                     action = action.split()[0]
-                    actuator, command = action.rsplit('-', 1)
+                    actuator, command = action.rsplit("-", 1)
 
+                    # Build PlanStep object
+                    step = {
+                        "actuator": actuator.replace(
+                            "turn-", ""
+                        ),  # e.g., "ac", "light"
+                        "action": command.upper(),  # e.g., "ON", "OFF"
+                        "timestamp": timestamp,
+                    }
+                    plan_steps.append(step)
+
+                    # Send actuator command as before
                     match actuator:
                         case "turn-light":
                             command_payload = {
                                 "command": command.upper(),
-                                "timestamp": timestamp
+                                "timestamp": timestamp,
                             }
-                            client.publish("actuator/light/command", json.dumps(command_payload))
-                            print(f"Published command to actuator/light/command: {command_payload}")
-                            
+                            client.publish(
+                                "actuator/light/command", json.dumps(command_payload)
+                            )
+                            print(
+                                f"Published command to actuator/light/command: {command_payload}"
+                            )
+
                         case "turn-ventilation":
                             command_payload = {
                                 "command": command.upper(),
-                                "timestamp": timestamp
+                                "timestamp": timestamp,
                             }
-                            client.publish("actuator/ventilation/command", json.dumps(command_payload))
-                            print(f"Published command to actuator/ventilation/command: {command_payload}")
+                            client.publish(
+                                "actuator/ventilation/command",
+                                json.dumps(command_payload),
+                            )
+                            print(
+                                f"Published command to actuator/ventilation/command: {command_payload}"
+                            )
 
                         case "turn-ac":
                             command_payload = {
                                 "command": command.upper(),
-                                "timestamp": timestamp
+                                "timestamp": timestamp,
                             }
-                            client.publish("actuator/ac/command", json.dumps(command_payload))
-                            print(f"Published command to actuator/ac/command: {command_payload}")
+                            client.publish(
+                                "actuator/ac/command", json.dumps(command_payload)
+                            )
+                            print(
+                                f"Published command to actuator/ac/command: {command_payload}"
+                            )
 
                         case "turn-alarm":
                             command_payload = {
                                 "command": command.upper(),
-                                "timestamp": timestamp
+                                "timestamp": timestamp,
                             }
-                            client.publish("actuator/alarm/command", json.dumps(command_payload))
-                            print(f"Published command to actuator/alarm/command: {command_payload}")
-            
+                            client.publish(
+                                "actuator/alarm/command", json.dumps(command_payload)
+                            )
+                            print(
+                                f"Published command to actuator/alarm/command: {command_payload}"
+                            )
+
+                # Build Plan object and send to frontend topic
+                plan = {
+                    "id": f"plan-{timestamp}",
+                    "status": "completed",  # or set dynamically if needed
+                    "steps": plan_steps,
+                    "createdAt": timestamp,
+                }
+                client.publish("planner/plan", json.dumps(plan))
+                print(f"Published plan to planner/plan: {plan}")
 
     except json.JSONDecodeError:
         print("Failed to decode JSON payload or running the planner.")
