@@ -58,6 +58,11 @@ class SimulatedSensor:
     def update_config(self, new_config):
         self.min_value = new_config.get("min", self.min_value)
         self.max_value = new_config.get("max", self.max_value)
+        self.upper_threshold = self.max_value + float(
+            os.getenv(
+                f"DEFAULT_{self.type.upper()}_UPPER",
+            )
+        )
 
     def simulate(self):
         while True:

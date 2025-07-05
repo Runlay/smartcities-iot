@@ -85,8 +85,6 @@ class ProblemGenerator:
         # AC
         if state["actuators"]["ac"] and state["actuators"]["ac"]["isOn"] == "ON":
             init_predicates.append("    (ac-on)")
-        else:
-            init_predicates.append("    (ac-off)")
 
         # Ventilation
         if (
@@ -94,20 +92,14 @@ class ProblemGenerator:
             and state["actuators"]["ventilation"]["isOn"] == "ON"
         ):
             init_predicates.append("    (ventilation-on)")
-        else:
-            init_predicates.append("    (ventilation-off)")
 
         # Light
         if state["actuators"]["light"] and state["actuators"]["light"]["isOn"] == "ON":
             init_predicates.append("    (light-on)")
-        else:
-            init_predicates.append("    (light-off)")
 
         # Alarm
         if state["actuators"]["alarm"] and state["actuators"]["alarm"]["isOn"] == "ON":
             init_predicates.append("    (alarm-on)")
-        else:
-            init_predicates.append("    (alarm-off)")
 
         return "\n".join(init_predicates)
 
@@ -115,8 +107,6 @@ class ProblemGenerator:
         self, state: Dict[str, Any], config: Dict[str, Any]
     ) -> str:
         goal_predicates = []
-
-        # TODO: explicitly check else conditions (to set...-off)?
 
         # AC
         if state["sensors"]["temperature"]:
@@ -128,7 +118,9 @@ class ProblemGenerator:
             if temp_max and temp_value > temp_max:
                 goal_predicates.append("    (ac-on)")
             elif temp_min and temp_value < temp_min:
-                goal_predicates.append("    (ac-off)")
+                goal_predicates.append("    (not (ac-on))")
+            else:
+                goal_predicates.append("    (not (ac-on))")
 
         # Humidity
         if state["sensors"]["humidity"]:
@@ -140,7 +132,9 @@ class ProblemGenerator:
             if humidity_max and humidity_value > humidity_max:
                 goal_predicates.append("    (ventilation-on)")
             elif humidity_min and humidity_value < humidity_min:
-                goal_predicates.append("    (ventilation-off)")
+                goal_predicates.append("    (not (ventilation-on))")
+            else:
+                goal_predicates.append("    (not (ventilation-on))")
 
         # Motion
         if state["sensors"]["motion"]:
@@ -148,7 +142,7 @@ class ProblemGenerator:
             if motion_detected:
                 goal_predicates.append("    (light-on)")
             else:
-                goal_predicates.append("    (light-off)")
+                goal_predicates.append("    (not (light-on))")
 
         # Pressure
         if state["sensors"]["pressure"]:
@@ -159,6 +153,6 @@ class ProblemGenerator:
             if pressure_max and pressure_value > pressure_max:
                 goal_predicates.append("    (alarm-on)")
             else:
-                goal_predicates.append("    (alarm-off)")
+                goal_predicates.append("    (not (alarm-on))")
 
         return "\n".join(goal_predicates)

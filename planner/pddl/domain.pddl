@@ -25,13 +25,9 @@
     
     ;; Actuator states
     (ac-on)
-    (ac-off)
     (ventilation-on)
-    (ventilation-off)
     (light-on)
-    (light-off)
     (alarm-on)
-    (alarm-off)
   )
   
   ;; Action to turn AC on when temperature is high
