@@ -34,11 +34,17 @@ class EnvironmentConfigurationManager:
         }
 
     def update_config(self, new_config: Dict[str, Any]) -> None:
+        print(f"🔧 CONFIG UPDATE: Received {new_config}")
         for sensor_type, config_data in new_config.items():
             if sensor_type in self.config:
+                print(
+                    f"📊 Updating {sensor_type}: {self.config[sensor_type]} -> {config_data}"
+                )
                 self.config[sensor_type].update(config_data)
+                print(f"✅ Updated {sensor_type}: {self.config[sensor_type]}")
             else:
                 raise ValueError(f"Unknown sensor type: {sensor_type}")
+        print(f"🔧 FULL CONFIG: {self.config}")
 
     def get_config(self) -> Dict[str, Any]:
         return self.config

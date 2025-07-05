@@ -20,6 +20,8 @@ class SimulatedSensor:
         self.value = random.uniform(self.min_value, self.max_value)
         self.above_range_counter = 0
         self.instance_id = self.generate_instance_id()
+        self.actuator_lag_counter = 0  # NEW: lag after actuator turns on
+        self.actuator_lag_phase = 0  # 0: no lag, 1: rising, 2: stagnant, 3: decrease
 
     def load_env_config(
         self,
@@ -66,26 +68,58 @@ class SimulatedSensor:
 
     def simulate(self):
         while True:
-            if (
-                self.actuator.state == "ON"
-            ):  # Actuator ON: decrease value toward normal range
-                if self.value > self.max_value:
-                    self.value = max(self.value - self.decrease_rate, self.max_value)
-                elif self.value < self.min_value:
-                    self.value = min(self.value + self.decrease_rate, self.min_value)
-                else:
-                    self.value = random.uniform(self.min_value, self.max_value)
-                self.above_range_counter = 0
-            else:  # Actuator OFF: random in range, then slowly increase above max
-                if self.value <= self.max_value:
-                    self.value = random.uniform(self.min_value, self.max_value)
-                    self.above_range_counter += 1
-                else:
+            # Actuator ON: introduce lag before decrease
+            if self.actuator.state == "ON":
+                if self.actuator_lag_phase == 0:
+                    self.actuator_lag_phase = 1
+                    self.actuator_lag_counter = 0
+                # Phase 1: continue to rise for 1 cycle
+                if self.actuator_lag_phase == 1:
+                    self.actuator_lag_counter += 1
                     self.value = min(
                         self.value + self.increase_rate, self.upper_threshold
                     )
-                # After N intervals, start increasing above max
-                if self.above_range_counter > 5:
+                    if self.actuator_lag_counter >= 1:
+                        self.actuator_lag_phase = 2
+                        self.actuator_lag_counter = 0
+                # Phase 2: stagnant for 1 cycle
+                elif self.actuator_lag_phase == 2:
+                    self.actuator_lag_counter += 1
+                    # Small random variation
+                    variation = random.uniform(-0.1, 0.1)
+                    self.value = max(
+                        self.min_value,
+                        min(self.upper_threshold, self.value + variation),
+                    )
+                    if self.actuator_lag_counter >= 1:
+                        self.actuator_lag_phase = 3
+                # Phase 3: start decreasing
+                elif self.actuator_lag_phase == 3:
+                    target_value = (self.min_value + self.max_value) / 2
+                    if self.value > target_value:
+                        self.value = max(self.value - self.decrease_rate, target_value)
+                    elif self.value < target_value:
+                        self.value = min(self.value + self.decrease_rate, target_value)
+                    else:
+                        variation = random.uniform(-0.1, 0.1)
+                        self.value = max(
+                            self.min_value,
+                            min(self.max_value, target_value + variation),
+                        )
+                self.above_range_counter = 0
+            # Actuator OFF: normal logic
+            else:
+                self.actuator_lag_phase = 0
+                if self.above_range_counter < 5:
+                    if self.value >= self.min_value and self.value <= self.max_value:
+                        variation = random.uniform(-0.2, 0.2)
+                        self.value = max(
+                            self.min_value, min(self.max_value, self.value + variation)
+                        )
+                    else:
+                        self.value = random.uniform(self.min_value, self.max_value)
+                    self.above_range_counter += 1
+                else:
                     self.value = min(
                         self.value + self.increase_rate, self.upper_threshold
                     )
