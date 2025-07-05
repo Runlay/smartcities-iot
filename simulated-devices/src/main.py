@@ -9,8 +9,15 @@ ventilation = SimulatedActuator("ventilation")
 
 # Create MQTT client with a dispatcher for all actuators
 def on_message(client, userdata, message):
-    ac.on_message(client, userdata, message)
-    ventilation.on_message(client, userdata, message)
+    print(
+        f"Dispatching message. Topic: {message.topic}, Payload: {message.payload.decode()}"
+    )
+    if message.topic.startswith("actuator/ac/"):
+        ac.on_message(client, userdata, message)
+    elif message.topic.startswith("actuator/ventilation/"):
+        ventilation.on_message(client, userdata, message)
+    else:
+        print(f"Unhandled topic: {message.topic}")
 
 
 mqtt_client = MqttClient(on_message)

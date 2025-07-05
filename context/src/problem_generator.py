@@ -123,24 +123,32 @@ class ProblemGenerator:
             temp_value = float(state["sensors"]["temperature"]["value"])
             temp_config = config.get("temperature", {})
             temp_max = temp_config.get("max")
+            temp_min = temp_config.get("min")
 
             if temp_max and temp_value > temp_max:
                 goal_predicates.append("    (ac-on)")
+            elif temp_min and temp_value < temp_min:
+                goal_predicates.append("    (ac-off)")
 
         # Humidity
         if state["sensors"]["humidity"]:
             humidity_value = float(state["sensors"]["humidity"]["value"])
             humidity_config = config.get("humidity", {})
             humidity_max = humidity_config.get("max")
+            humidity_min = humidity_config.get("min")
 
             if humidity_max and humidity_value > humidity_max:
                 goal_predicates.append("    (ventilation-on)")
+            elif humidity_min and humidity_value < humidity_min:
+                goal_predicates.append("    (ventilation-off)")
 
         # Motion
         if state["sensors"]["motion"]:
             motion_detected = state["sensors"]["motion"]["value"].lower() == "true"
             if motion_detected:
                 goal_predicates.append("    (light-on)")
+            else:
+                goal_predicates.append("    (light-off)")
 
         # Pressure
         if state["sensors"]["pressure"]:
@@ -150,5 +158,7 @@ class ProblemGenerator:
 
             if pressure_max and pressure_value > pressure_max:
                 goal_predicates.append("    (alarm-on)")
+            else:
+                goal_predicates.append("    (alarm-off)")
 
         return "\n".join(goal_predicates)

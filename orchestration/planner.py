@@ -3,15 +3,15 @@ import subprocess
 import platform
 import re
 
+
 def run_fd_docker():
-
-
     cmd = [
         "sudo",
         "docker",
         "run",
         "--rm",
-        "-v", "smartcities-iot_pddl_data:/data",
+        "-v",
+        "smartcities-iot_pddl_data:/data",
         "fast-downward",
         "/data/domain.pddl",
         "/data/problem.pddl",
@@ -21,6 +21,9 @@ def run_fd_docker():
 
     try:
         result = subprocess.run(cmd, check=True, text=True, capture_output=True)
+
+        print(f"=== PLANNER RAW RESULT ===\n{result}")
+
         # Extract the plan from stdout
         plan_lines = []
         lines = result.stdout.splitlines()
@@ -33,10 +36,16 @@ def run_fd_docker():
             if collecting:
                 stripped = line.strip()
                 # Only collect lines that look like action lines
-                if stripped and not stripped.startswith("[") and not stripped.startswith("Plan"):
+                if (
+                    stripped
+                    and not stripped.startswith("[")
+                    and not stripped.startswith("Plan")
+                ):
                     if "  (" in stripped or stripped.endswith(")") or "-" in stripped:
                         plan_lines.append(stripped)
-                elif stripped.startswith("Plan length") or "search exit code" in stripped:
+                elif (
+                    stripped.startswith("Plan length") or "search exit code" in stripped
+                ):
                     break  # stop collecting
 
         print("\n".join(plan_lines))

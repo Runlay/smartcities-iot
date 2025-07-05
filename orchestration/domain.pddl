@@ -39,11 +39,11 @@
     :parameters ()
     :precondition (and 
       (temperature-high)
-      (not (ac-on))
+      (ac-off)
     )
-    :effect (ac-on)
+    :effect (and (ac-on) (not (ac-off)))
   )
-  
+
   ;; Action to turn AC off when temperature is not high
   (:action turn-ac-off
     :parameters ()
@@ -51,19 +51,19 @@
       (or (temperature-low) (temperature-ok))
       (ac-on)
     )
-    :effect (not (ac-on))
+    :effect (and (ac-off) (not (ac-on)))
   )
-  
+
   ;; Action to turn ventilation on when humidity is high
   (:action turn-ventilation-on
     :parameters ()
     :precondition (and 
       (humidity-high)
-      (not (ventilation-on))
+      (ventilation-off)
     )
-    :effect (ventilation-on)
+    :effect (and (ventilation-on) (not (ventilation-off)))
   )
-  
+
   ;; Action to turn ventilation off when humidity is not high
   (:action turn-ventilation-off
     :parameters ()
@@ -71,19 +71,19 @@
       (or (humidity-low) (humidity-ok))
       (ventilation-on)
     )
-    :effect (not (ventilation-on))
+    :effect (and (ventilation-off) (not (ventilation-on)))
   )
-  
+
   ;; Action to turn light on when motion is detected
   (:action turn-light-on
     :parameters ()
     :precondition (and 
       (motion-detected)
-      (not (light-on))
+      (light-off)
     )
-    :effect (light-on)
+    :effect (and (light-on) (not (light-off)))
   )
-  
+
   ;; Action to turn light off when no motion is detected
   (:action turn-light-off
     :parameters ()
@@ -91,19 +91,19 @@
       (no-motion-detected)
       (light-on)
     )
-    :effect (not (light-on))
+    :effect (and (light-off) (not (light-on)))
   )
-  
+
   ;; Action to turn alarm on when pressure is high
   (:action turn-alarm-on
     :parameters ()
     :precondition (and 
       (pressure-high)
-      (not (alarm-on))
+      (alarm-off)
     )
-    :effect (alarm-on)
+    :effect (and (alarm-on) (not (alarm-off)))
   )
-  
+
   ;; Action to turn alarm off when pressure is ok
   (:action turn-alarm-off
     :parameters ()
@@ -111,6 +111,6 @@
       (pressure-ok)
       (alarm-on)
     )
-    :effect (not (alarm-on))
+    :effect (and (alarm-off) (not (alarm-on)))
   )
 )

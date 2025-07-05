@@ -13,6 +13,8 @@ services:
     restart: always
     ports:
       - '80:3000'
+    # depends_on:
+    #   - rabbitmq
     environment:
       - VITE_MQTT_BROKER_HOST=${VITE_MQTT_BROKER_HOST}
       - VITE_MQTT_BROKER_PORT_WS=${VITE_MQTT_BROKER_PORT_WS}
@@ -73,6 +75,8 @@ services:
   context:
     build: ./context
     restart: always
+    # depends_on:
+    #   - rabbitmq
     environment:
       - MQTT_BROKER_HOST=${MQTT_BROKER_HOST}
       - MQTT_BROKER_PORT_TCP=${MQTT_BROKER_PORT_TCP}
@@ -88,12 +92,12 @@ services:
       - DEFAULT_HUMIDITY_MAX=${DEFAULT_HUMIDITY_MAX}
       - DEFAULT_MOTION_LIGHT_DURATION=${DEFAULT_MOTION_LIGHT_DURATION}
       - DEFAULT_PRESSURE_THRESHOLD=${DEFAULT_PRESSURE_THRESHOLD}
-    # depends_on:
-    #   - rabbitmq
 
   simulated-devices:
     build: ./simulated-devices
     restart: always
+    # depends_on:
+    #   - rabbitmq
     environment:
       - MQTT_BROKER_HOST=${MQTT_BROKER_HOST}
       - MQTT_BROKER_PORT_TCP=${MQTT_BROKER_PORT_TCP}

@@ -38,7 +38,7 @@ const Navbar = () => {
           <NavigationMenuItem>
             <NavMenuLink to='/'>
               <div className='flex items-center gap-2'>
-                <Home className='w-5 h-5 text-foreground' />
+                <Home className='text-foreground h-5 w-5' />
                 <span>Dashboard</span>
               </div>
             </NavMenuLink>
@@ -46,7 +46,7 @@ const Navbar = () => {
           <NavigationMenuItem>
             <NavMenuLink to='/configuration'>
               <div className='flex items-center gap-2'>
-                <Cog className='w-5 h-5 text-foreground' />
+                <Cog className='text-foreground h-5 w-5' />
                 <span>Configuration</span>
               </div>
             </NavMenuLink>
@@ -54,7 +54,7 @@ const Navbar = () => {
           <NavigationMenuItem>
             <NavMenuLink to='/plan-execution'>
               <div className='flex items-center gap-2'>
-                <List className='w-5 h-5 text-foreground' />
+                <List className='text-foreground h-5 w-5' />
                 <span>Plan Execution</span>
               </div>
             </NavMenuLink>
@@ -62,7 +62,7 @@ const Navbar = () => {
           <NavigationMenuItem>
             <NavMenuLink to='/raw-data'>
               <div className='flex items-center gap-2'>
-                <FileText className='w-5 h-5 text-foreground' />
+                <FileText className='text-foreground h-5 w-5' />
                 <span>Raw Data</span>
               </div>
             </NavMenuLink>
