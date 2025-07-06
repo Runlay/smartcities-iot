@@ -4,7 +4,7 @@ from datetime import datetime
 
 class EnvironmentStateManager:
     def __init__(self):
-        timestamp = datetime.now().isoformat()
+        timestamp = datetime.now().isoformat() + "Z"
 
         self.state = {
             "sensors": {

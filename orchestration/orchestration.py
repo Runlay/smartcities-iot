@@ -49,7 +49,7 @@ def on_message(client, userdata, msg):
                 print(f"Copied domain.pddl to {domain_file}")
 
             plan = run_fd_docker()
-            timestamp = datetime.now().isoformat()
+            timestamp = datetime.now().isoformat() + "Z"
 
             if plan is not None:
                 plan_steps = []

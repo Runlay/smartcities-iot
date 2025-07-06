@@ -19,6 +19,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useConfigurationStore } from '@/store/configuration-store';
+import { publishMqttMessage } from '@/lib/mqtt-client';
 import { useRef, useState, useEffect } from 'react';
 
 const ChangeSettings = () => {
@@ -78,6 +79,10 @@ const ChangeSettings = () => {
     // Update store
     setConfiguration(newConfiguration);
 
+    // Publish config update to MQTT
+    publishMqttMessage('env/config', newConfiguration);
+    console.log('📤 Published config update to env/config:', newConfiguration);
+
     setShowSuccess(true);
 
     // Clear all inputs
@@ -104,8 +109,8 @@ const ChangeSettings = () => {
       <CardContent>
         <form className='flex flex-col gap-8'>
           <div>
-            <div className='flex items-center gap-2 mb-4 '>
-              <Thermometer className='w-5 h-5 text-muted-foreground' />
+            <div className='mb-4 flex items-center gap-2'>
+              <Thermometer className='text-muted-foreground h-5 w-5' />
               <h3 className='font-medium'>Temperature Range</h3>
             </div>
 
@@ -135,8 +140,8 @@ const ChangeSettings = () => {
           </div>
 
           <div>
-            <div className='flex items-center gap-2 mb-4 '>
-              <Droplets className='w-5 h-5 text-muted-foreground' />
+            <div className='mb-4 flex items-center gap-2'>
+              <Droplets className='text-muted-foreground h-5 w-5' />
               <h3 className='font-medium'>Humidity Range</h3>
             </div>
 
@@ -170,12 +175,12 @@ const ChangeSettings = () => {
           </div>
 
           <div>
-            <div className='flex items-center gap-2 mb-4 '>
-              <Clock className='w-5 h-5 text-muted-foreground' />
+            <div className='mb-4 flex items-center gap-2'>
+              <Clock className='text-muted-foreground h-5 w-5' />
               <h3 className='font-medium'>Motion Light Duration</h3>
             </div>
 
-            <div className='flex flex-col gap-2 max-w-2xs'>
+            <div className='flex max-w-2xs flex-col gap-2'>
               <Label htmlFor='duration'>Duration (seconds)</Label>
               <Input
                 id='duration'
@@ -189,12 +194,12 @@ const ChangeSettings = () => {
           </div>
 
           <div>
-            <div className='flex items-center gap-2 mb-4 '>
-              <Gauge className='w-5 h-5 text-muted-foreground' />
+            <div className='mb-4 flex items-center gap-2'>
+              <Gauge className='text-muted-foreground h-5 w-5' />
               <h3 className='font-medium'>Pressure Threshold</h3>
             </div>
 
-            <div className='flex flex-col gap-2 max-w-2xs'>
+            <div className='flex max-w-2xs flex-col gap-2'>
               <Label htmlFor='threshold'>Threshold (kg)</Label>
               <Input
                 id='threshold'
@@ -211,18 +216,18 @@ const ChangeSettings = () => {
 
       <CardFooter className='mt-8 flex items-center justify-start gap-4'>
         <Button onClick={handleSaveConfiguration}>
-          <Save className='h-5 w-5 ' />
+          <Save className='h-5 w-5' />
           Save
         </Button>
 
         <Button variant='secondary' onClick={clearAllInputs}>
-          <Delete className='h-5 w-5 ' />
+          <Delete className='h-5 w-5' />
           Clear All
         </Button>
 
         {showSuccess && (
-          <Alert className='border-0 bg-background h-8 flex items-center'>
-            <CheckCircle className='w-5 h-5 text-green-600 dark:text-green-600' />
+          <Alert className='bg-background flex h-8 items-center border-0'>
+            <CheckCircle className='h-5 w-5 text-green-600 dark:text-green-600' />
             <AlertDescription>
               Configuration updated successfully!
             </AlertDescription>

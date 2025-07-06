@@ -137,7 +137,7 @@ class SimulatedSensor:
                 "type": self.type,
                 "value": f"{self.value:.2f}",
                 "unit": self.unit,
-                "timestamp": datetime.now().isoformat(),
+                "timestamp": datetime.now().isoformat() + "Z",
                 "instanceId": self.instance_id,
             }
         )
