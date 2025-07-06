@@ -1,4 +1,5 @@
 import json
+from datetime import datetime
 
 
 class SimulatedActuator:
@@ -37,7 +38,8 @@ class SimulatedActuator:
 
     def publish_state(self):
         topic = f"actuator/{self.type}/state"
-        payload = json.dumps({"state": self.state})
+        timestamp = datetime.now().isoformat() + "Z"
+        payload = json.dumps({"state": self.state, "timestamp": timestamp})
         print(
             f"Publishing state for {self.type} to topic: {topic} with payload: {payload}"
         )
