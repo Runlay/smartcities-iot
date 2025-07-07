@@ -25,23 +25,23 @@ class RedisHandler:
     def set_value(self, key, value):
         try:
             self._client.set(key, value)
-        except:
-            print("Error while setting value.")
+        except Exception as e:
+            print("Error while setting value.", e)
 
     def lpush(self, key, value):
         try:
             self._client.lpush(key, value)
-        except:
-            print("Error while pushing value to list.")
+        except Exception as e:
+            print("Error while pushing value to list.", e)
 
     def get_value(self, key):
         try:
             return self._client.get(key)
-        except:
-            print("Error while getting value.")
+        except Exception as e:
+            print("Error while getting value.", e)
 
     def get_list_values(self, key):
         try:
             return self._client.lrange(key, 0, -1)
-        except:
-            print("Error while getting value.")
+        except Exception as e:
+            print("Error while getting value.", e)
