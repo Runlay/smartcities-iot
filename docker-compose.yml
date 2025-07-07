@@ -5,6 +5,7 @@ volumes:
   rabbitmq_data:
   gateway_data:
   pddl_data:
+  postgres_data:
 
 services:
   frontend:
@@ -66,6 +67,11 @@ services:
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=admin
       - POSTGRES_DB=postgres
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database:/docker-entrypoint-initdb.d
 
   adminer:
     image: adminer
@@ -76,11 +82,17 @@ services:
   backend:
     build: ./backend
     restart: always
-    # depends_on:
-    #   - redis
+    depends_on:
+      - postgres
+      - redis
     environment:
       - REDIS_HOST=${REDIS_HOST}
       - REDIS_PORT=${REDIS_PORT}
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=postgres
     ports:
       - '8000:8000'
 

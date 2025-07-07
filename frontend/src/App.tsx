@@ -5,7 +5,14 @@ import PlanExecutionPage from './pages/PlanExecutionPage.tsx';
 import RawDataPage from './pages/RawDataPage.tsx';
 import RootLayout from './pages/RootLayout.tsx';
 
+import { useEffect } from 'react';
+import { fetchLatestConfig } from './store/configuration-store.ts';
+
 const App = () => {
+  useEffect(() => {
+    fetchLatestConfig();
+  }, []);
+
   return (
     <BrowserRouter>
       <Routes>

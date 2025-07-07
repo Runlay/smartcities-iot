@@ -1,6 +1,5 @@
 import { create } from 'zustand';
 import type { EnvironmentConfiguration } from '@/types';
-import { addMqttMessagehandler } from '@/lib/mqtt-client';
 
 const VITE_DEFAULT_TEMPERATURE_MIN =
   import.meta.env.VITE_DEFAULT_TEMPERATURE_MIN || '18';
@@ -47,14 +46,16 @@ export const useConfigurationStore = create<ConfigurationStore>((set) => ({
     }),
 }));
 
-const handleConfigurationStateMessage = (topic: string, message: object) => {
-  console.log('Reveived configuration state update:', message);
+export async function fetchLatestConfig() {
+  const url = 'http://localhost:8000/api/config';
 
-  if (topic === 'env/config') {
-    useConfigurationStore
-      .getState()
-      .setConfiguration(message as EnvironmentConfiguration);
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+    if (data.config) {
+      useConfigurationStore.getState().setConfiguration(data.config);
+    }
+  } catch (error) {
+    console.error('Error fetching latest configuration:', error);
   }
-};
-
-addMqttMessagehandler('env/config', handleConfigurationStateMessage);
+}

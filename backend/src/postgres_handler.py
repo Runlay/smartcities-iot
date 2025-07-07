@@ -13,46 +13,9 @@ class PostgresHandler:
             print("Error connecting to PostgreSQL database.", e)
 
     def ensure_table(self):
-        with self._conn.cursor() as cur:
-            try:
-                # Try to create the table normally
-                cur.execute(
-                    """
-                    CREATE TABLE IF NOT EXISTS environment_config (
-                        id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-                        config JSONB NOT NULL,
-                        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                    );
-                    """
-                )
-                self._conn.commit()
-            except psycopg2.Error as e:
-                # If there's a sequence conflict, clean up and recreate
-                if "environment_config_id_seq" in str(e) and "already exists" in str(e):
-                    print("Sequence conflict detected, cleaning up...")
-                    self._conn.rollback()  # Rollback the failed transaction
-
-                    # Clean up the orphaned sequence and table
-                    cur.execute("DROP TABLE IF EXISTS environment_config CASCADE;")
-                    cur.execute(
-                        "DROP SEQUENCE IF EXISTS environment_config_id_seq CASCADE;"
-                    )
-
-                    # Now create the table fresh
-                    cur.execute(
-                        """
-                        CREATE TABLE environment_config (
-                            id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-                            config JSONB NOT NULL,
-                            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                        );
-                        """
-                    )
-                    self._conn.commit()
-                    print("Table and sequence created successfully after cleanup.")
-                else:
-                    # Re-raise if it's a different error
-                    raise
+        # Table is now created via initialization script in db-init/
+        # This method is kept for compatibility but does nothing
+        pass
 
     def create_config(self, config):
         with self._conn.cursor() as cur:

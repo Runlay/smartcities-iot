@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from redis_handler import RedisHandler
 from postgres_handler import PostgresHandler
@@ -11,6 +12,15 @@ import threading
 threading.Thread(target=start_mqtt_worker, daemon=True).start()
 
 app = FastAPI()
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost", "http://localhost:3000", "http://localhost:80"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 redis_client = RedisHandler()
 postgres_client = PostgresHandler(
