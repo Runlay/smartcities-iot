@@ -1,11 +1,17 @@
-from typing import Dict, Any, Optional
-from dotenv import load_dotenv
+import requests
 import os
 
 
 class EnvironmentConfigurationManager:
-    def __init__(self):
-        load_dotenv()
+    def fetch_latest_config(self):
+        url = "http://backend:8000/api/config"
+        try:
+            res = requests.get(url)
+            data = res.json()
+            if "config" in data:
+                return data["config"]
+        except Exception as e:
+            print(f"Error fetching config: {e}")
 
         DEFAULT_TEMPERATURE_MIN = float(os.getenv("DEFAULT_TEMPERATURE_MIN", 18.0))
         DEFAULT_TEMPERATURE_MAX = float(os.getenv("DEFAULT_TEMPERATURE_MAX", 20.0))
@@ -16,7 +22,7 @@ class EnvironmentConfigurationManager:
         )
         DEFAULT_PRESSURE_THRESHOLD = int(os.getenv("DEFAULT_PRESSURE_THRESHOLD", 100))
 
-        self.config = {
+        default_config = {
             "temperature": {
                 "min": DEFAULT_TEMPERATURE_MIN,
                 "max": DEFAULT_TEMPERATURE_MAX,
@@ -33,21 +39,4 @@ class EnvironmentConfigurationManager:
             },
         }
 
-    def update_config(self, new_config: Dict[str, Any]) -> None:
-        print(f"🔧 CONFIG UPDATE: Received {new_config}")
-        for sensor_type, config_data in new_config.items():
-            if sensor_type in self.config:
-                print(
-                    f"📊 Updating {sensor_type}: {self.config[sensor_type]} -> {config_data}"
-                )
-                self.config[sensor_type].update(config_data)
-                print(f"✅ Updated {sensor_type}: {self.config[sensor_type]}")
-            else:
-                raise ValueError(f"Unknown sensor type: {sensor_type}")
-        print(f"🔧 FULL CONFIG: {self.config}")
-
-    def get_config(self) -> Dict[str, Any]:
-        return self.config
-
-    def get_sensor_config(self, sensor_type: str) -> Optional[Dict[str, Any]]:
-        return self.config.get(sensor_type)
+        return default_config

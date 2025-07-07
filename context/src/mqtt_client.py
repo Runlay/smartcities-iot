@@ -34,7 +34,7 @@ def on_connect(client, userdata, flags, reason_code, properties):
 
 def generate_plan():
     current_state = state_manager.get_state()
-    current_config = config_manager.get_config()
+    current_config = config_manager.fetch_latest_config()
 
     try:
         problem_data = problem_generator.generate_problem(current_state, current_config)
@@ -64,9 +64,6 @@ def on_message(client, userdata, msg):
             actuator_type = topic.split("/")[1]
             state_manager.update_actuator_state(actuator_type, payload)
             should_publish_state = True
-        elif topic == "env/config":
-            config_manager.update_config(payload)
-            should_generate_plan = True
 
         if should_publish_state:
             current_state = state_manager.get_state()
