@@ -9,7 +9,7 @@ from datetime import datetime
 load_dotenv()
 
 MQTT_BROKER_HOST = os.getenv("MQTT_BROKER_HOST", "localhost")
-MQTT_BROKER_PORT = int(os.getenv("MQTT_BROKER_PORT_TCP", 1883))
+MQTT_BROKER_PORT =1883
 MQTT_BROKER_USERNAME = os.getenv("MQTT_BROKER_USERNAME")
 MQTT_BROKER_PASSWORD = os.getenv("MQTT_BROKER_PASSWORD")
 
@@ -44,10 +44,10 @@ def on_message(client, userdata, msg):
             if not os.path.exists(domain_file):
                 # copy the domain.pddl file from the orchestration folder to the PDDL_OUTPUT_PATH
                 subprocess.run(
-                    ["cp", "/orchestration/domain.pddl", domain_file], check=True
+                    ["cp", "/orchestration/src/domain.pddl", domain_file], check=True
                 )
                 print(f"Copied domain.pddl to {domain_file}")
-
+            
             plan = run_fd_docker()
             timestamp = datetime.now().isoformat() + "Z"
 

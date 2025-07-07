@@ -14,7 +14,7 @@ problem_generator = ProblemGenerator()
 load_dotenv()
 
 MQTT_BROKER_HOST = os.getenv("MQTT_BROKER_HOST", "localhost")
-MQTT_BROKER_PORT = int(os.getenv("MQTT_BROKER_PORT_TCP", 1883))
+MQTT_BROKER_PORT = 1883
 MQTT_BROKER_USERNAME = os.getenv("MQTT_BROKER_USERNAME")
 MQTT_BROKER_PASSWORD = os.getenv("MQTT_BROKER_PASSWORD")
 

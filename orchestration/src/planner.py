@@ -5,14 +5,28 @@ import re
 
 
 def run_fd_docker():
+    # cmd = [
+    #     "sudo",
+    #     "docker",
+    #     "run",
+    #     "--rm",
+    #     "-v",
+    #     "smartcities-iot_pddl_data:/data",
+    #     "fast-downward",
+    #     "/data/domain.pddl",
+    #     "/data/problem.pddl",
+    #     "--search",
+    #     "lazy_greedy([ff()], preferred=[ff()])",
+    # ]
+
+    # for balena only
     cmd = [
-        "sudo",
         "docker",
         "run",
         "--rm",
         "-v",
-        "smartcities-iot_pddl_data:/data",
-        "fast-downward",
+        "2243607_pddl_data:/data", # make sure this volume exists in your balena environment
+        "c2daafbeb27f", # image ID
         "/data/domain.pddl",
         "/data/problem.pddl",
         "--search",

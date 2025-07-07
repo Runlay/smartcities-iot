@@ -12,8 +12,8 @@ COPY pyproject.toml uv.lock ./
 
 RUN uv sync --frozen --no-cache
 
-COPY . .
+COPY src/ ./src/
 
 ENV PYTHONPATH=/orchestration/src
 
-CMD ["uv", "run", "orchestration.py"]
+CMD ["uv", "run", "src/orchestration.py"]
