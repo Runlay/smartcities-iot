@@ -1,6 +1,5 @@
 import paho.mqtt.client as mqtt
 from redis_handler import RedisHandler
-import time
 
 
 try:
@@ -9,8 +8,6 @@ try:
     mqttc = mqtt.Client()
     mqttc.username_pw_set("guest", "guest")
     mqttc.connect("host.docker.internal", 1883, 60)
-
-    mqttc.loop_start()
 
     print("Connected to MQTT broker")
 
@@ -41,9 +38,8 @@ try:
 
     mqttc.on_message = on_message
 
-    # Keep the loop running
-    while True:
-        time.sleep(1)
+    mqttc.loop_forever()
+
 
 except Exception as e:
     print(f"Error: {e}")
