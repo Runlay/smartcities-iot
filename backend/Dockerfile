@@ -1,16 +1,15 @@
-FROM python:3.9-slim
+FROM python:3.13-slim
 
-WORKDIR /app
+RUN pip install uv
 
-RUN apt-get update && apt-get install -y --no-install-recommends gcc python3-dev \
-    && rm -rf /var/lib/apt/lists/*
+WORKDIR /backend
 
-COPY requirements.txt .
+COPY pyproject.toml uv.lock ./
 
-RUN pip install --no-cache-dir -r requirements.txt
+RUN uv sync --frozen --no-cache
 
-COPY . .
+COPY src/ ./src/
 
-EXPOSE 4000
+ENV PYTHONPATH=/backend/src
 
-CMD sh -c "python mqtt_worker.py & uvicorn app:app --host 0.0.0.0 --port 4000"
+CMD ["uv", "run", "fastapi", "run", "src/main.py"]

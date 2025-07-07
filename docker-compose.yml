@@ -82,9 +82,7 @@ services:
       - REDIS_HOST=${REDIS_HOST}
       - REDIS_PORT=${REDIS_PORT}
     ports:
-      - '4000:4000'
-    expose:
-      - 4000
+      - '8000:8000'
 
   context:
     build: ./context

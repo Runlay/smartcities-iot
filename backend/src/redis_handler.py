@@ -1,14 +1,17 @@
 import redis
 
-class DatabaseHandler():
+
+class RedisHandler:
     def __init__(self):
         # Initialize Redis client
         self._client = None
         self.connect()
-    
+
     def connect(self):
-        try: 
-            self._client = redis.StrictRedis(host='host.docker.internal', port=6379, db=0) 
+        try:
+            self._client = redis.StrictRedis(
+                host="host.docker.internal", port=6379, db=0
+            )
             # Return session information
             info = self._client.info()
             print("Connected to Redis. Session info:")
@@ -18,14 +21,13 @@ class DatabaseHandler():
         except Exception as e:
             print("Error while connecting.")
             print(e)
-        
 
     def set_value(self, key, value):
         try:
             self._client.set(key, value)
         except:
             print("Error while setting value.")
-    
+
     def lpush(self, key, value):
         try:
             self._client.lpush(key, value)
