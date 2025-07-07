@@ -1,9 +1,18 @@
 import paho.mqtt.client as mqtt
 from redis_handler import RedisHandler
+from postgres_handler import PostgresHandler
+import json
 
 
-try:
+def start_mqtt_worker():
     redis_client = RedisHandler()
+    postgres_client = PostgresHandler(
+        dbname="postgres",
+        user="admin",
+        password="admin",
+        host="postgres",
+        port=5432,
+    )
 
     mqttc = mqtt.Client()
     mqttc.username_pw_set("guest", "guest")
@@ -17,6 +26,7 @@ try:
         ("sensor/humidity", 0),
         ("sensor/pressure", 0),
         ("sensor/motion", 0),
+        ("env/config", 0),
     ]
     mqttc.subscribe(topics)
 
@@ -31,6 +41,11 @@ try:
         if redis_key:
             print(f"Received message on {message.topic}: {message.payload.decode()}")
             redis_client.lpush(redis_key, message.payload.decode())
+        elif message.topic == "env/config":
+            print(f"Received environment config update: {message.payload.decode()}")
+            config = json.loads(message.payload.decode())
+            postgres_client.create_config(config)
+            print("New environment config created in PostgreSQL")
         else:
             print(
                 f"Received message on unknown topic {message.topic}: {message.payload.decode()}"
@@ -39,7 +54,3 @@ try:
     mqttc.on_message = on_message
 
     mqttc.loop_forever()
-
-
-except Exception as e:
-    print(f"Error: {e}")

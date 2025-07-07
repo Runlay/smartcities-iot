@@ -1,12 +1,25 @@
 from fastapi import FastAPI
 
 from redis_handler import RedisHandler
+from postgres_handler import PostgresHandler
+from mqtt_worker import start_mqtt_worker
 import json
+import threading
 
+
+# Start the MQTT worker in a separate thread
+threading.Thread(target=start_mqtt_worker, daemon=True).start()
 
 app = FastAPI()
 
 redis_client = RedisHandler()
+postgres_client = PostgresHandler(
+    dbname="postgres",
+    user="admin",
+    password="admin",
+    host="postgres",
+    port=5432,
+)
 
 
 @app.get("/")
@@ -77,3 +90,12 @@ async def push_data(data: dict):
     redis_client.lpush(key, json_data)
 
     return {"message": "Data pushed successfully", "data": data}
+
+
+@app.get("/api/config")
+async def get_config():
+    config = postgres_client.get_latest_config()
+    if config:
+        return {"message": "Configuration retrieved successfully", "config": config}
+    else:
+        return {"message": "No configuration found", "config": None}
