@@ -19,7 +19,6 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useConfigurationStore } from '@/store/configuration-store';
-import { publishMqttMessage } from '@/lib/mqtt-client';
 import { useRef, useState, useEffect } from 'react';
 
 const ChangeSettings = () => {
@@ -79,14 +78,26 @@ const ChangeSettings = () => {
     // Update store
     setConfiguration(newConfiguration);
 
-    // Publish config update to MQTT
-    publishMqttMessage('env/config', newConfiguration);
-    console.log('📤 Published config update to env/config:', newConfiguration);
-
-    setShowSuccess(true);
-
-    // Clear all inputs
-    clearAllInputs();
+    // Save config to backend
+    fetch('http://localhost:8000/api/config', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ config: newConfiguration }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          console.log('✅ Config saved to backend successfully');
+          setShowSuccess(true);
+          // Clear all inputs
+          clearAllInputs();
+        } else {
+          console.error('❌ Failed to save config:', data.message);
+        }
+      })
+      .catch((err) => {
+        console.error('❌ Error saving config to backend:', err);
+      });
   };
 
   const clearAllInputs = () => {

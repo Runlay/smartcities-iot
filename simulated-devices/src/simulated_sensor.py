@@ -3,11 +3,9 @@ import json
 import random
 import time
 from datetime import datetime
-from dotenv import load_dotenv
+import requests
 from threading import Thread
 import secrets
-
-load_dotenv()
 
 
 class SimulatedSensor:
@@ -57,6 +55,17 @@ class SimulatedSensor:
             )
         )
 
+    def fetch_latest_config(self):
+        url = "http://backend:8000/api/config"
+        try:
+            res = requests.get(url, timeout=2)
+            data = res.json()
+            if "config" in data and self.type in data["config"]:
+                return data["config"][self.type]
+        except Exception as e:
+            print(f"Error fetching config for {self.type}: {e}")
+        return {}
+
     def update_config(self, new_config):
         self.min_value = new_config.get("min", self.min_value)
         self.max_value = new_config.get("max", self.max_value)
@@ -68,6 +77,10 @@ class SimulatedSensor:
 
     def simulate(self):
         while True:
+            latest_config = self.fetch_latest_config()
+            if latest_config:
+                self.update_config(latest_config)
+
             # Actuator ON: introduce lag before decrease
             if self.actuator.state == "ON":
                 if self.actuator_lag_phase == 0:

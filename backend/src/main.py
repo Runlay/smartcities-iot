@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
 from redis_handler import RedisHandler
@@ -109,3 +109,24 @@ async def get_config():
         return {"message": "Configuration retrieved successfully", "config": config}
     else:
         return {"message": "No configuration found", "config": None}
+
+
+@app.post("/api/config")
+async def update_config(request: Request):
+    """
+    Update the environment configuration in the database.
+
+    Expected payload: {"config": {...}}
+    """
+    try:
+        data = await request.json()
+        config = data.get("config")
+
+        if not config:
+            return {"message": "No config provided", "success": False}
+
+        postgres_client.create_config(config)
+
+        return {"message": "Configuration updated successfully", "success": True}
+    except Exception as e:
+        return {"message": f"Error updating configuration: {str(e)}", "success": False}
