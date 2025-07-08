@@ -21,7 +21,7 @@ services:
       - VITE_MQTT_BROKER_PASSWORD=guest
       - VITE_MQTT_ENVIRONMENT_TOPICS=env/+
       - VITE_MQTT_SENSOR_TOPICS=sensor/+
-      - VITE_MQTT_PLANNER_TOPCS=planner/+
+      - VITE_MQTT_PLANNER_TOPICS=planner/+
       - VITE_DEFAULT_TEMPERATURE_MIN=18
       - VITE_DEFAULT_TEMPERATURE_MAX=20
       - VITE_DEFAULT_HUMIDITY_MIN=40
@@ -58,7 +58,7 @@ services:
       - 6379
 
   postgres:
-    image: postgres
+    build: ./postgres
     restart: always
     environment:
       - POSTGRES_USER=admin
@@ -68,7 +68,6 @@ services:
       - '5432:5432'
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./database:/docker-entrypoint-initdb.d
 
   adminer:
     image: adminer
@@ -96,7 +95,7 @@ services:
   context:
     build: ./context
     restart: always
-    depends_on: 
+    depends_on:
       - rabbitmq
     environment:
       - MQTT_BROKER_HOST=rabbitmq
@@ -117,7 +116,7 @@ services:
   simulated-devices:
     build: ./simulated-devices
     restart: always
-    depends_on: 
+    depends_on:
       - rabbitmq
     environment:
       - MQTT_BROKER_HOST=rabbitmq
@@ -157,6 +156,8 @@ services:
       # - /var/run/docker.sock:/var/run/docker.sock
     labels:
       io.balena.features.balena-socket: '1'
+    depends_on:
+      - rabbitmq
     environment:
       - MQTT_BROKER_HOST=rabbitmq
       - MQTT_BROKER_PORT_TCP=1883

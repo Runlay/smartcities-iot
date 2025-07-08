@@ -25,8 +25,8 @@ def run_fd_docker():
         "run",
         "--rm",
         "-v",
-        "2243607_pddl_data:/data", # make sure this volume exists in your balena environment
-        "c2daafbeb27f", # image ID
+        "2243607_pddl_data:/data",  # make sure this volume exists in your balena environment
+        "c2daafbeb27f",  # image ID
         "/data/domain.pddl",
         "/data/problem.pddl",
         "--search",
