@@ -16,7 +16,13 @@ app = FastAPI()
 # Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost", "http://localhost:3000", "http://localhost:80"],
+    allow_origins=[
+        "http://localhost",
+        "http://localhost:3000",
+        "http://localhost:80",
+        "http://[2a00:1e:bb80:9201:c4:5072:2ca5:65f7]",  # IPv6 address for Pi
+        "http://[2a00:1e:bb80:9201:c4:5072:2ca5:65f7]:80",  # IPv6 address with explicit port
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
