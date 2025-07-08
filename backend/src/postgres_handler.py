@@ -1,11 +1,11 @@
-import psycopg2
+import psycopg
 import json
 
 
 class PostgresHandler:
     def __init__(self, dbname, user, password, host, port):
         try:
-            self._conn = psycopg2.connect(
+            self._conn = psycopg.connect(
                 dbname=dbname, user=user, password=password, host=host, port=port
             )
             self.ensure_table()

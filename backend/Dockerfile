@@ -1,5 +1,15 @@
 FROM python:3.13-slim
 
+# Install system dependencies for psycopg compilation
+RUN apt-get update && apt-get install -y \
+    libpq-dev \
+    gcc \
+    g++ \
+    make \
+    libc6-dev \
+    pkg-config \
+    && rm -rf /var/lib/apt/lists/*
+
 RUN pip install uv
 
 WORKDIR /backend
