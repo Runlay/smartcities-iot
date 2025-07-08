@@ -8,7 +8,7 @@ class EnvironmentConfigurationManager:
         try:
             res = requests.get(url)
             data = res.json()
-            if "config" in data:
+            if "config" in data and data["config"] is not None:
                 return data["config"]
         except Exception as e:
             print(f"Error fetching config: {e}")
