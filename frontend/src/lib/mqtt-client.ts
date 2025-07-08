@@ -1,7 +1,8 @@
 import mqtt from 'mqtt';
 
-const VITE_MQTT_BROKER_HOST =
-  import.meta.env.VITE_MQTT_BROKER_HOST || 'localhost';
+// const VITE_MQTT_BROKER_HOST =
+//   import.meta.env.VITE_MQTT_BROKER_HOST || 'localhost';
+const VITE_MQTT_BROKER_HOST = "2a00:1e:bb80:9201:c4:5072:2ca5:65f7"
 const VITE_MQTT_BROKER_PORT_WS =
   import.meta.env.VITE_MQTT_BROKER_PORT_WS || 15675;
 const VITE_MQTT_BROKER_URL = `ws://${VITE_MQTT_BROKER_HOST}:${VITE_MQTT_BROKER_PORT_WS}/ws`;
