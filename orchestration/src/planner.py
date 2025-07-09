@@ -26,7 +26,7 @@ def run_fd_docker():
         "--rm",
         "-v",
         "2243607_pddl_data:/data",  # make sure this volume exists in your balena environment
-        "c2daafbeb27f",  # image ID
+        "335bae47c8fa",  # image ID
         "/data/domain.pddl",
         "/data/problem.pddl",
         "--search",
@@ -60,12 +60,12 @@ def run_fd_docker():
                 elif (
                     stripped.startswith("Plan length") or "search exit code" in stripped
                 ):
-                    break  # stop collecting
+                    break  
 
         print("\n".join(plan_lines))
         return plan_lines
     except subprocess.CalledProcessError as e:
-        print("❌ Fehler beim Ausführen von Fast Downward:")
+        print("Fehler beim Ausführen von Fast Downward:")
         print("STDOUT:\n", e.stdout)
         print("STDERR:\n", e.stderr)
         raise e
