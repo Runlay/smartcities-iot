@@ -1,6 +1,6 @@
 FROM node:22.15-bullseye-slim
 
-WORKDIR /usr/src/app
+WORKDIR /app
 
 COPY package.json ./package.json
 
@@ -10,4 +10,4 @@ COPY . ./
 RUN npm run build
 
 EXPOSE 3000
-CMD ["npm", "start"]
+CMD ["node", "server.js"]
