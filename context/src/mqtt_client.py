@@ -52,23 +52,19 @@ def on_message(client, userdata, msg):
     try:
         payload = json.loads(msg.payload.decode())
         topic = msg.topic
-        should_publish_state = False
         should_generate_plan = False
 
         if topic.startswith("sensor/"):
             sensor_type = topic.split("/")[1]
             state_manager.update_sensor_data(sensor_type, payload)
-            should_publish_state = True
             should_generate_plan = True
         elif topic.startswith("actuator/") and topic.endswith("/state"):
             actuator_type = topic.split("/")[1]
             state_manager.update_actuator_state(actuator_type, payload)
-            should_publish_state = True
 
-        if should_publish_state:
-            current_state = state_manager.get_state()
-            client.publish("env/state", json.dumps(current_state))
-            print(f"Published current state: {current_state}")
+        current_state = state_manager.get_state()
+        client.publish("env/state", json.dumps(current_state))
+        print(f"Published current state: {current_state}")
 
         if should_generate_plan:
             generate_plan()
