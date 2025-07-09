@@ -3,7 +3,7 @@ import json
 import os
 import random
 import paho.mqtt.client as mqtt
-from gpiozero import RGBLED, Buzzer, Device
+from gpiozero import RGBLED, Button, Buzzer, Device
 from gpiozero.pins.native import NativeFactory
 from time import sleep
 
@@ -13,6 +13,7 @@ mqtt_port = int(os.getenv("MQTT_PORT", "1883"))
 Device.pin_factory = NativeFactory()
 led = RGBLED(red=17, green=18, blue=19, pwm=False)
 bz = Buzzer(2)
+#button = Button(13) # TODO Pin
 
 topic_in = 'OpenZWave/1/#'
 topic_out = 'sensor/'
@@ -88,13 +89,21 @@ def alarm(client, userdata, msg):
 
     if data['command'] == 'ON':
         bz.beep()
+        pass
     elif data['command'] == 'OFF':
         bz.off()
+        pass
+
+def button_press():
+    client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
+    msg = generate_json('pressure', 'detected', '1', '')
+    client.publish(topic_out + 'pressure', json.dumps(msg))
 
 def main():
     connect_mqtt(topic_in, transform_message)
     connect_mqtt('actuator/light/command', light)
     connect_mqtt('actuator/alarm/command', alarm)
+    #button.when_pressed = button_press
 
     while True:
         pass

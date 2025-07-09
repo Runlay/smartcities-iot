@@ -165,15 +165,5 @@ services:
       - MQTT_BROKER_PASSWORD=guest
 
   gateway:
-    image: openzwave/ozwdaemon:latest
     build: ./gateway
     restart: always
-    privileged: true
-    devices:
-      - '/dev/serial/by-id/usb-0658_0200-if00:/dev/zwave'
-    tty: true
-    environment:
-      MQTT_SERVER: '192.168.178.90'
-      USB_PATH: '/dev/ttyACM0'
-    volumes:
-      - gateway_data:/opt/ozw/config
