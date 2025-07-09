@@ -48,7 +48,7 @@ export const useConfigurationStore = create<ConfigurationStore>((set) => ({
 
 export async function fetchLatestConfig() {
   // Wrap IPv6 address in brackets for proper URL formatting
-  const url = 'http://localhost:8000/api/config';
+  const url = '/api/config';
 
   try {
     const res = await fetch(url);

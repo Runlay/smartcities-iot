@@ -79,7 +79,7 @@ const ChangeSettings = () => {
     setConfiguration(newConfiguration);
 
     // Save config to backend
-    fetch('http://localhost:8000/api/config', {
+    fetch('/api/config', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ config: newConfiguration }),

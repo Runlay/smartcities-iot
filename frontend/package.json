@@ -20,6 +20,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "express": "^5.1.0",
+    "http-proxy-middleware": "^3.0.5",
     "lucide-react": "^0.523.0",
     "mqtt": "^5.13.1",
     "react": "^19.1.0",
