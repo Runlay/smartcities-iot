@@ -63,7 +63,7 @@ class ProblemGenerator:
 
         # Motion (check if motion is currently detected)
         if state["sensors"]["motion"]:
-            motion_detected = state["sensors"]["motion"]["value"].lower() == "true"
+            motion_detected = state["sensors"]["motion"]["value"] == 1
             if motion_detected:
                 init_predicates.append("    (motion-detected)")
             else:
@@ -71,11 +71,9 @@ class ProblemGenerator:
 
         # Pressure
         if state["sensors"]["pressure"]:
-            pressure_value = int(state["sensors"]["pressure"]["value"])
-            pressure_config = config.get("pressure", {})
-            pressure_max = pressure_config.get("threshold")
+            button_pressed = state["sensors"]["pressure"]["value"] == 1
 
-            if pressure_max and pressure_value > pressure_max:
+            if button_pressed:
                 init_predicates.append("    (pressure-high)")
             else:
                 init_predicates.append("    (pressure-ok)")
@@ -164,19 +162,16 @@ class ProblemGenerator:
 
         # Motion
         if state["sensors"]["motion"]:
-            motion_detected = state["sensors"]["motion"]["value"].lower() == "true"
+            motion_detected = state["sensors"]["motion"]["value"] == 1
             if motion_detected:
                 goal_predicates.append("    (light-on)")
             else:
                 goal_predicates.append("    (not (light-on))")
 
-        # Pressure
+        # Pressure (button)
         if state["sensors"]["pressure"]:
-            pressure_value = int(state["sensors"]["pressure"]["value"])
-            pressure_config = config.get("pressure", {})
-            pressure_max = pressure_config.get("threshold")
-
-            if pressure_max and pressure_value > pressure_max:
+            button_pressed = state["sensors"]["pressure"]["value"] == 1
+            if button_pressed:
                 goal_predicates.append("    (alarm-on)")
             else:
                 goal_predicates.append("    (not (alarm-on))")
