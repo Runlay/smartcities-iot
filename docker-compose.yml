@@ -167,3 +167,6 @@ services:
   gateway:
     build: ./gateway
     restart: always
+    privileged: true
+    environment:
+      - MQTT_SERVER=192.168.0.103
