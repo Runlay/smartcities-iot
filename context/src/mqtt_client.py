@@ -52,12 +52,10 @@ def on_message(client, userdata, msg):
     try:
         payload = json.loads(msg.payload.decode())
         topic = msg.topic
-        should_generate_plan = False
 
         if topic.startswith("sensor/"):
             sensor_type = topic.split("/")[1]
             state_manager.update_sensor_data(sensor_type, payload)
-            should_generate_plan = True
         elif topic.startswith("actuator/") and topic.endswith("/state"):
             actuator_type = topic.split("/")[1]
             state_manager.update_actuator_state(actuator_type, payload)
@@ -66,8 +64,7 @@ def on_message(client, userdata, msg):
         client.publish("env/state", json.dumps(current_state))
         print(f"Published current state: {current_state}")
 
-        if should_generate_plan:
-            generate_plan()
+        generate_plan()
 
     except json.JSONDecodeError:
         print("Failed to decode JSON payload.")
