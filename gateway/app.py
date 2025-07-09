@@ -42,7 +42,6 @@ def light(client, userdata, msg):
         "state": data['command']
     }
 
-    client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
     client.publish('actuator/light/state', json.dumps(state))
 
 def alarm(client, userdata, msg):
@@ -58,7 +57,6 @@ def alarm(client, userdata, msg):
         "state": data['command']
     }
 
-    client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
     client.publish('actuator/alarm/state', json.dumps(state))
 
 def main():
