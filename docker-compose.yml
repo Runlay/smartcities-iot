@@ -78,9 +78,9 @@ services:
   backend:
     build: ./backend
     restart: always
-    depends_on:
-      - postgres
-      - redis
+    # depends_on:
+    #   - postgres
+    #   - redis
     environment:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
@@ -95,8 +95,8 @@ services:
   context:
     build: ./context
     restart: always
-    depends_on:
-      - rabbitmq
+    # depends_on:
+    #   - rabbitmq
     environment:
       - MQTT_BROKER_HOST=rabbitmq
       - MQTT_BROKER_PORT_TCP=1883
@@ -116,8 +116,8 @@ services:
   simulated-devices:
     build: ./simulated-devices
     restart: always
-    depends_on:
-      - rabbitmq
+    # depends_on:
+    #   - rabbitmq
     environment:
       - MQTT_BROKER_HOST=rabbitmq
       - MQTT_BROKER_PORT_TCP=1883
@@ -156,8 +156,8 @@ services:
       # - /var/run/docker.sock:/var/run/docker.sock
     labels:
       io.balena.features.balena-socket: '1'
-    depends_on:
-      - rabbitmq
+    # depends_on:
+    #   - rabbitmq
     environment:
       - MQTT_BROKER_HOST=rabbitmq
       - MQTT_BROKER_PORT_TCP=1883
