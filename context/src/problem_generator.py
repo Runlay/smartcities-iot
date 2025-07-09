@@ -63,7 +63,7 @@ class ProblemGenerator:
 
         # Motion (check if motion is currently detected)
         if state["sensors"]["motion"]:
-            motion_detected = state["sensors"]["motion"]["value"] == 1
+            motion_detected = state["sensors"]["motion"]["value"] == "1"
             if motion_detected:
                 init_predicates.append("    (motion-detected)")
             else:
@@ -71,7 +71,7 @@ class ProblemGenerator:
 
         # Pressure
         if state["sensors"]["pressure"]:
-            button_pressed = state["sensors"]["pressure"]["value"] == 1
+            button_pressed = state["sensors"]["pressure"]["value"] == "1"
 
             if button_pressed:
                 init_predicates.append("    (pressure-high)")
@@ -162,7 +162,7 @@ class ProblemGenerator:
 
         # Motion
         if state["sensors"]["motion"]:
-            motion_detected = state["sensors"]["motion"]["value"] == 1
+            motion_detected = state["sensors"]["motion"]["value"] == "1"
             if motion_detected:
                 goal_predicates.append("    (light-on)")
             else:
@@ -170,7 +170,7 @@ class ProblemGenerator:
 
         # Pressure (button)
         if state["sensors"]["pressure"]:
-            button_pressed = state["sensors"]["pressure"]["value"] == 1
+            button_pressed = state["sensors"]["pressure"]["value"] == "1"
             if button_pressed:
                 goal_predicates.append("    (alarm-on)")
             else:

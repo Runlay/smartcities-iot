@@ -60,7 +60,7 @@ def run_fd_docker():
                 elif (
                     stripped.startswith("Plan length") or "search exit code" in stripped
                 ):
-                    break  
+                    break
 
         print("\n".join(plan_lines))
         return plan_lines

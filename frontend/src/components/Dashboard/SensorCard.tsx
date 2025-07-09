@@ -54,7 +54,10 @@ const SensorCard = ({ sensorType, sensorData }: StateCardProps) => {
 
   let value = sensorData.value;
   if (sensorData.type === 'motion') {
-    value = value === 'true' ? 'Motion Detected' : 'No Motion Detected';
+    value = value === '1' ? 'Motion Detected' : 'No Motion Detected';
+  }
+  if (sensorData.type === 'pressure') {
+    value = value === '1' ? 'Pressure High' : 'Pressure Normal';
   }
 
   return (
