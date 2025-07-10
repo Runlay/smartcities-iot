@@ -16,7 +16,7 @@ def start_mqtt_worker():
 
     mqttc = mqtt.Client()
     mqttc.username_pw_set("guest", "guest")
-    mqttc.connect("host.docker.internal", 1883, 60)
+    mqttc.connect("rabbitmq", 1883, 60)
 
     print("Connected to MQTT broker")
 

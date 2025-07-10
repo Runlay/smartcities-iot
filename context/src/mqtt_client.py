@@ -5,11 +5,22 @@ from problem_generator import ProblemGenerator
 import json
 from dotenv import load_dotenv
 import os
+import time
+import threading
 
 
 state_manager = EnvironmentStateManager()
 config_manager = EnvironmentConfigurationManager()
 problem_generator = ProblemGenerator()
+
+# Debouncing variables
+last_plan_generation_time = 0
+last_state_publish_time = 0
+PLAN_GENERATION_INTERVAL = 15  # seconds
+STATE_PUBLISH_INTERVAL = 10  # seconds
+pending_plan_generation = False
+plan_generation_timer = None
+debounce_lock = threading.Lock()
 
 load_dotenv()
 
@@ -25,30 +36,72 @@ MQTT_TOPICS = [MQTT_SENSOR_TOPICS, MQTT_ACTUATOR_STATE_TOPICS, MQTT_ENVIRONMENT_
 
 
 def on_connect(client, userdata, flags, reason_code, properties):
-    print(f"Connected with result code {reason_code}")
-
     for topic in MQTT_TOPICS:
         client.subscribe(topic)
-    print(f"Subscribed to topics: {MQTT_TOPICS}")
 
 
 def generate_plan():
+    """Generate and publish a PDDL problem immediately."""
+    global last_plan_generation_time
+
     current_state = state_manager.get_state()
     current_config = config_manager.fetch_latest_config()
 
     try:
         problem_data = problem_generator.generate_problem(current_state, current_config)
-
-        # Publish to planner/problem topic
         client.publish("planner/problem", json.dumps(problem_data))
-        print(f"✓ Published PDDL problem to planner: {problem_data['id']}")
+        last_plan_generation_time = time.time()
     except Exception as e:
         print(f"✗ Failed to generate PDDL problem: {e}")
 
 
-def on_message(client, userdata, msg):
-    print(msg.topic + " " + str(msg.payload))
+def schedule_plan_generation():
+    """Schedule a plan generation with debouncing logic."""
+    global pending_plan_generation, plan_generation_timer, last_plan_generation_time
 
+    with debounce_lock:
+        current_time = time.time()
+        time_since_last_plan = current_time - last_plan_generation_time
+
+        if time_since_last_plan >= PLAN_GENERATION_INTERVAL:
+            generate_plan()
+            pending_plan_generation = False
+            return
+
+        if pending_plan_generation:
+            return
+
+        remaining_time = PLAN_GENERATION_INTERVAL - time_since_last_plan
+        pending_plan_generation = True
+
+        if plan_generation_timer:
+            plan_generation_timer.cancel()
+
+        plan_generation_timer = threading.Timer(remaining_time, _execute_pending_plan)
+        plan_generation_timer.start()
+
+
+def _execute_pending_plan():
+    """Execute the pending plan generation."""
+    global pending_plan_generation
+
+    with debounce_lock:
+        pending_plan_generation = False
+        generate_plan()
+
+
+def publish_state_if_needed():
+    """Publish state only if enough time has passed."""
+    global last_state_publish_time
+
+    current_time = time.time()
+    if current_time - last_state_publish_time >= STATE_PUBLISH_INTERVAL:
+        current_state = state_manager.get_state()
+        client.publish("env/state", json.dumps(current_state))
+        last_state_publish_time = current_time
+
+
+def on_message(client, userdata, msg):
     try:
         payload = json.loads(msg.payload.decode())
         topic = msg.topic
@@ -60,14 +113,11 @@ def on_message(client, userdata, msg):
             actuator_type = topic.split("/")[1]
             state_manager.update_actuator_state(actuator_type, payload)
 
-        current_state = state_manager.get_state()
-        client.publish("env/state", json.dumps(current_state))
-        print(f"Published current state: {current_state}")
-
-        generate_plan()
+        publish_state_if_needed()
+        schedule_plan_generation()
 
     except json.JSONDecodeError:
-        print("Failed to decode JSON payload.")
+        pass  # Silently ignore invalid JSON
 
 
 client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
