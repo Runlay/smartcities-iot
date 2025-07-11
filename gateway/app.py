@@ -1,109 +1,109 @@
 from datetime import datetime as dt
+from zoneinfo import ZoneInfo
 import json
 import os
-import random
 import paho.mqtt.client as mqtt
 from gpiozero import RGBLED, Button, Buzzer, Device
 from gpiozero.pins.native import NativeFactory
 from time import sleep
 
-mqtt_server = os.getenv("MQTT_SERVER", "localhost")
+mqtt_server = os.getenv("MQTT_SERVER", "rabbitmq")
 mqtt_port = int(os.getenv("MQTT_PORT", "1883"))
 
 Device.pin_factory = NativeFactory()
 led = RGBLED(red=17, green=18, blue=19, pwm=False)
 bz = Buzzer(2)
 
-
-def connect_mqtt(topic, on_message):
-    def on_connect(client, userdata, flags, rc, properties):
-        if rc == 0:
-            print(f"Connected to MQTT broker, subscribed to: {topic}")
-        else:
-            print(f"Failed to connect to MQTT broker, return code: {rc}")
-
-    client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
-    client.on_connect = on_connect
-    client.username_pw_set("guest", "guest")
-    client.connect(mqtt_server, mqtt_port)
-    client.subscribe(topic)
-    client.on_message = on_message
-    client.loop_start()
-    return client
+# MQTT topics to subscribe to
+MQTT_ACTUATOR_COMMAND_TOPICS = [
+    "actuator/light/command",
+    "actuator/alarm/command",
+]
 
 
-def light(client, userdata, msg):
+def get_timestamp():
+    """Generate ISO 8601 timestamp in German timezone"""
+    return dt.now(ZoneInfo("Europe/Berlin")).isoformat()
+
+
+def on_connect(client, userdata, flags, reason_code, properties):
+    """Subscribe to all actuator command topics when connected"""
+    if reason_code == 0:
+        print("Connected to MQTT broker")
+        for topic in MQTT_ACTUATOR_COMMAND_TOPICS:
+            client.subscribe(topic)
+            print(f"Subscribed to: {topic}")
+    else:
+        print(f"Failed to connect to MQTT broker, return code: {reason_code}")
+
+
+def on_message(client, userdata, msg):
+    """Handle incoming MQTT messages"""
     try:
-        payload = msg.payload.decode("utf-8")
-        print(f"📨 Received light command: {payload}")
-
+        topic = msg.topic
+        payload = msg.payload.decode()
         data = json.loads(payload)
         command = data.get("command", "").upper()
 
-        if command == "ON":
-            led.on()
-            print("💡 LED turned ON")
-        elif command == "OFF":
-            led.off()
-            print("💡 LED turned OFF")
-        else:
-            print(f"⚠️ Unknown light command: {command}")
-            return
-
-        state = {"state": command}
-        state_message = json.dumps(state)
-
-        client.publish("actuator/light/state", state_message)
-        print(f"📤 Published light state: {state_message}")
+        if topic == "actuator/light/command":
+            handle_light(client, command)
+        elif topic == "actuator/alarm/command":
+            handle_alarm(client, command)
 
     except json.JSONDecodeError as e:
-        print(f"❌ Failed to decode JSON in light command: {e}")
+        print(f"❌ Failed to decode JSON: {e}")
+    except Exception as e:
+        print(f"❌ Error handling message: {e}")
+
+
+def handle_light(client, command):
+    """Handle light actuator commands"""
+    try:
+        if command == "ON":
+            led.on()
+        elif command == "OFF":
+            led.off()
+
+        # Publish state message
+        state = {"state": command, "timestamp": get_timestamp()}
+        state_message = json.dumps(state)
+        client.publish("actuator/light/state", state_message)
+
     except Exception as e:
         print(f"❌ Error in light handler: {e}")
 
 
-def alarm(client, userdata, msg):
+def handle_alarm(client, command):
+    """Handle alarm actuator commands"""
     try:
-        payload = msg.payload.decode("utf-8")
-        print(f"📨 Received alarm command: {payload}")
-
-        data = json.loads(payload)
-        command = data.get("command", "").upper()
-
         if command == "ON":
             bz.beep()
-            print("🔔 Buzzer turned ON")
         elif command == "OFF":
             bz.off()
-            print("🔔 Buzzer turned OFF")
-        else:
-            print(f"⚠️ Unknown alarm command: {command}")
-            return
 
-        state = {"state": command}
+        # Publish state message
+        state = {"state": command, "timestamp": get_timestamp()}
         state_message = json.dumps(state)
-
         client.publish("actuator/alarm/state", state_message)
-        print(f"📤 Published alarm state: {state_message}")
 
-    except json.JSONDecodeError as e:
-        print(f"❌ Failed to decode JSON in alarm command: {e}")
     except Exception as e:
         print(f"❌ Error in alarm handler: {e}")
 
 
 def main():
-    print("🚀 Starting Gateway Application")
-
+    """Main function to start the gateway"""
     try:
-        connect_mqtt("actuator/light/command", light)
-        connect_mqtt("actuator/alarm/command", alarm)
+        # Create single MQTT client
+        client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
+        client.username_pw_set("guest", "guest")
+        client.on_connect = on_connect
+        client.on_message = on_message
 
-        print("✅ Gateway initialized successfully")
-        print("🔄 Listening for actuator commands...")
+        # Connect to MQTT broker
+        client.connect(mqtt_server, mqtt_port, 60)
 
-        while True:
-            sleep(1)  # Add small delay to reduce CPU usage
+        # Start MQTT loop (blocking)
+        client.loop_forever()
 
     except KeyboardInterrupt:
         print("🛑 Gateway shutting down...")
