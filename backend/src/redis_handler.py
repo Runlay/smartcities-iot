@@ -9,9 +9,7 @@ class RedisHandler:
 
     def connect(self):
         try:
-            self._client = redis.StrictRedis(
-                host="host.docker.internal", port=6379, db=0
-            )
+            self._client = redis.StrictRedis(host="redis", port=6379, db=0)
             # Return session information
             info = self._client.info()
             print("Connected to Redis. Session info:")
