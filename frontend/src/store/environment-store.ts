@@ -1,5 +1,11 @@
 import { addMqttMessagehandler } from '@/lib/mqtt-client';
-import type { EnvironmentState } from '@/types';
+import type {
+  EnvironmentState,
+  SensorType,
+  ActuatorType,
+  SensorData,
+  ActuatorData,
+} from '@/types';
 import { create } from 'zustand';
 
 const timestamp = new Date().toISOString();
@@ -20,23 +26,68 @@ const INITIAL_ENVIRONMENT_STATE: EnvironmentState = {
 
 interface EnvironmentStore {
   environmentState: EnvironmentState;
-  setEnvironmentState: (newState: EnvironmentState) => void;
+  setSensorState: (sensorType: SensorType, data: SensorData) => void;
+  setActuatorState: (actuatorType: ActuatorType, data: ActuatorData) => void;
 }
 
 export const useEnvironmentStore = create<EnvironmentStore>((set) => ({
   environmentState: INITIAL_ENVIRONMENT_STATE,
-  setEnvironmentState: (newState: EnvironmentState) =>
-    set({ environmentState: newState }),
+  setSensorState: (sensorType, data) =>
+    set((state) => ({
+      environmentState: {
+        ...state.environmentState,
+        sensors: {
+          ...state.environmentState.sensors,
+          [sensorType]: data, // Replace the whole sensor data
+        },
+      },
+    })),
+  setActuatorState: (actuatorType, data) =>
+    set((state) => ({
+      environmentState: {
+        ...state.environmentState,
+        actuators: {
+          ...state.environmentState.actuators,
+          [actuatorType]: data, // Replace the whole actuator data
+        },
+      },
+    })),
 }));
 
-const handleEnvironmentStateMessage = (topic: string, message: object) => {
-  console.log('Reveived environment state update:', message);
+// Subscribe to individual sensor topics
+const SENSOR_TYPES: SensorType[] = [
+  'temperature',
+  'humidity',
+  'motion',
+  'pressure',
+];
+SENSOR_TYPES.forEach((type) => {
+  addMqttMessagehandler(`sensor/${type}`, (_: string, message) => {
+    useEnvironmentStore.getState().setSensorState(type, message as SensorData);
+  });
+});
 
-  if (topic === 'env/state') {
-    useEnvironmentStore
-      .getState()
-      .setEnvironmentState(message as EnvironmentState);
-  }
-};
+interface ActuatorMqttMessage {
+  state: string;
+  timestamp?: string;
+  instanceId?: string;
+}
 
-addMqttMessagehandler('env/state', handleEnvironmentStateMessage);
+// Subscribe to individual actuator state topics
+const ACTUATOR_TYPES: ActuatorType[] = ['ac', 'ventilation', 'light', 'alarm'];
+ACTUATOR_TYPES.forEach((type) => {
+  addMqttMessagehandler(
+    `actuator/${type}/state`,
+    (_: string, message: object) => {
+      const actuatorMessage = message as ActuatorMqttMessage;
+      const initial = INITIAL_ENVIRONMENT_STATE.actuators[type];
+      const transformedData = {
+        type,
+        isOn: actuatorMessage.state as 'ON' | 'OFF', // Transform "state" to "isOn"
+        timestamp: actuatorMessage.timestamp || initial.timestamp,
+        instanceId: actuatorMessage.instanceId || initial.instanceId,
+      };
+      useEnvironmentStore.getState().setActuatorState(type, transformedData);
+    }
+  );
+});
