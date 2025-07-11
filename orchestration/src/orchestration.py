@@ -5,11 +5,12 @@ import os
 from planner import run_fd_docker
 import subprocess
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 load_dotenv()
 
-MQTT_BROKER_HOST = os.getenv("MQTT_BROKER_HOST", "localhost")
-MQTT_BROKER_PORT =1883
+MQTT_BROKER_HOST = os.getenv("MQTT_BROKER_HOST", "rabbitmq")
+MQTT_BROKER_PORT = 1883
 MQTT_BROKER_USERNAME = os.getenv("MQTT_BROKER_USERNAME")
 MQTT_BROKER_PASSWORD = os.getenv("MQTT_BROKER_PASSWORD")
 
@@ -17,6 +18,11 @@ MQTT_PLANNER_PROBLEM_TOPIC = "planner/problem"
 MQTT_TOPICS = [MQTT_PLANNER_PROBLEM_TOPIC]
 
 PDDL_OUTPUT_PATH = "/data"
+
+
+def get_timestamp():
+    """Generate ISO 8601 timestamp in German timezone"""
+    return datetime.now(ZoneInfo("Europe/Berlin")).isoformat()
 
 
 def on_connect(client, userdata, flags, reason_code, properties):
@@ -47,9 +53,9 @@ def on_message(client, userdata, msg):
                     ["cp", "/orchestration/src/domain.pddl", domain_file], check=True
                 )
                 print(f"Copied domain.pddl to {domain_file}")
-            
+
             plan = run_fd_docker()
-            timestamp = datetime.now().isoformat() + "Z"
+            timestamp = get_timestamp()
 
             if plan is not None:
                 plan_steps = []
