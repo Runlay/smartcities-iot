@@ -13,11 +13,9 @@ state_manager = EnvironmentStateManager()
 config_manager = EnvironmentConfigurationManager()
 problem_generator = ProblemGenerator()
 
-# Debouncing variables
+# Only keep plan generation debouncing
 last_plan_generation_time = 0
-last_state_publish_time = 0
-PLAN_GENERATION_INTERVAL = 15  # seconds
-STATE_PUBLISH_INTERVAL = 10  # seconds
+PLAN_GENERATION_INTERVAL = 5  # seconds
 pending_plan_generation = False
 plan_generation_timer = None
 debounce_lock = threading.Lock()
@@ -31,8 +29,8 @@ MQTT_BROKER_PASSWORD = os.getenv("MQTT_BROKER_PASSWORD")
 
 MQTT_SENSOR_TOPICS = os.getenv("MQTT_SENSOR_TOPICS", "sensor/+")
 MQTT_ACTUATOR_STATE_TOPICS = os.getenv("MQTT_ACTUATOR_STATE_TOPICS", "actuator/+/state")
-MQTT_ENVIRONMENT_TOPICS = os.getenv("MQTT_ENVIRONMENT_TOPICS", "env/+")
-MQTT_TOPICS = [MQTT_SENSOR_TOPICS, MQTT_ACTUATOR_STATE_TOPICS, MQTT_ENVIRONMENT_TOPICS]
+# Remove env/+ topic since it's not used anymore
+MQTT_TOPICS = [MQTT_SENSOR_TOPICS, MQTT_ACTUATOR_STATE_TOPICS]
 
 
 def on_connect(client, userdata, flags, reason_code, properties):
@@ -90,17 +88,6 @@ def _execute_pending_plan():
         generate_plan()
 
 
-def publish_state_if_needed():
-    """Publish state only if enough time has passed."""
-    global last_state_publish_time
-
-    current_time = time.time()
-    if current_time - last_state_publish_time >= STATE_PUBLISH_INTERVAL:
-        current_state = state_manager.get_state()
-        client.publish("env/state", json.dumps(current_state))
-        last_state_publish_time = current_time
-
-
 def on_message(client, userdata, msg):
     try:
         payload = json.loads(msg.payload.decode())
@@ -113,7 +100,7 @@ def on_message(client, userdata, msg):
             actuator_type = topic.split("/")[1]
             state_manager.update_actuator_state(actuator_type, payload)
 
-        publish_state_if_needed()
+        # Only trigger plan generation, no state publishing
         schedule_plan_generation()
 
     except json.JSONDecodeError:
@@ -126,6 +113,4 @@ client.on_connect = on_connect
 client.on_message = on_message
 
 client.connect(MQTT_BROKER_HOST, MQTT_BROKER_PORT, 60)
-
-
 client.loop_forever()
