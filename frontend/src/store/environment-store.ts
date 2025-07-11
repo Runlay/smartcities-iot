@@ -13,14 +13,14 @@ const timestamp = new Date().toISOString();
 const INITIAL_ENVIRONMENT_STATE: EnvironmentState = {
   sensors: {},
   actuators: {
-    ac: { isOn: 'OFF', timestamp: timestamp, instanceId: 'default-ac' },
+    ac: { type: 'ac', state: 'OFF', timestamp: timestamp },
     ventilation: {
-      isOn: 'OFF',
+      type: 'ventilation',
+      state: 'OFF',
       timestamp: timestamp,
-      instanceId: 'default-ventilation',
     },
-    light: { isOn: 'OFF', timestamp: timestamp, instanceId: 'default-light' },
-    alarm: { isOn: 'OFF', timestamp: timestamp, instanceId: 'default-alarm' },
+    light: { type: 'light', state: 'OFF', timestamp: timestamp },
+    alarm: { type: 'alarm', state: 'OFF', timestamp: timestamp },
   },
 };
 
@@ -69,8 +69,7 @@ SENSOR_TYPES.forEach((type) => {
 
 interface ActuatorMqttMessage {
   state: string;
-  timestamp?: string;
-  instanceId?: string;
+  timestamp: string;
 }
 
 // Subscribe to individual actuator state topics
@@ -80,12 +79,10 @@ ACTUATOR_TYPES.forEach((type) => {
     `actuator/${type}/state`,
     (_: string, message: object) => {
       const actuatorMessage = message as ActuatorMqttMessage;
-      const initial = INITIAL_ENVIRONMENT_STATE.actuators[type];
-      const transformedData = {
+      const transformedData: ActuatorData = {
         type,
-        isOn: actuatorMessage.state as 'ON' | 'OFF', // Transform "state" to "isOn"
-        timestamp: actuatorMessage.timestamp || initial.timestamp,
-        instanceId: actuatorMessage.instanceId || initial.instanceId,
+        state: actuatorMessage.state as 'ON' | 'OFF',
+        timestamp: actuatorMessage.timestamp,
       };
       useEnvironmentStore.getState().setActuatorState(type, transformedData);
     }

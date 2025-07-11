@@ -1,54 +1,3 @@
-export type EnvironmentState = {
-  sensors: {
-    temperature?: {
-      value: string;
-      unit: string;
-      timestamp: string;
-      instanceId: string;
-    };
-    humidity?: {
-      value: string;
-      unit: string;
-      timestamp: string;
-      instanceId: string;
-    };
-    motion?: {
-      value: string;
-      unit: string;
-      timestamp: string;
-      instanceId: string;
-    };
-    pressure?: {
-      value: string;
-      unit: string;
-      timestamp: string;
-      instanceId: string;
-    };
-  };
-  actuators: {
-    ac: {
-      isOn: 'ON' | 'OFF';
-      timestamp: string;
-      instanceId: string;
-    };
-    ventilation: {
-      isOn: 'ON' | 'OFF';
-      timestamp: string;
-      instanceId: string;
-    };
-    light: {
-      isOn: 'ON' | 'OFF';
-      timestamp: string;
-      instanceId: string;
-    };
-    alarm: {
-      isOn: 'ON' | 'OFF';
-      timestamp: string;
-      instanceId: string;
-    };
-  };
-};
-
 export type SensorType = 'temperature' | 'humidity' | 'motion' | 'pressure';
 
 export type SensorData = {
@@ -56,7 +5,6 @@ export type SensorData = {
   value: string;
   unit: string;
   timestamp: string;
-  instanceId: string;
 };
 
 export type RawSensorData = {
@@ -68,9 +16,23 @@ export type ActuatorType = 'ac' | 'ventilation' | 'light' | 'alarm';
 
 export type ActuatorData = {
   type: ActuatorType;
-  isOn: 'ON' | 'OFF';
+  state: 'ON' | 'OFF';
   timestamp: string;
-  instanceId: string;
+};
+
+export type EnvironmentState = {
+  sensors: {
+    temperature?: SensorData;
+    humidity?: SensorData;
+    motion?: SensorData;
+    pressure?: SensorData;
+  };
+  actuators: {
+    ac: ActuatorData;
+    ventilation: ActuatorData;
+    light: ActuatorData;
+    alarm: ActuatorData;
+  };
 };
 
 export type EnvironmentConfiguration = {
@@ -98,7 +60,6 @@ export type PlanStep = {
 
 export type Plan = {
   id: string;
-  status: 'pending' | 'running' | 'completed' | 'failed';
   steps: PlanStep[];
   createdAt: string;
 };
