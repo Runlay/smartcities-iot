@@ -49,10 +49,10 @@ const ActuatorCard = ({ actuatorType, actuatorData }: ActuatorCardProps) => {
         <div>
           <span
             className={`text-2xl font-semibold uppercase ${
-              actuatorData.isOn === 'OFF' ? 'text-muted-foreground' : undefined
+              actuatorData.state === 'OFF' ? 'text-muted-foreground' : undefined
             }`}
           >
-            {actuatorData.isOn}
+            {actuatorData.state}
           </span>
         </div>
       </CardContent>

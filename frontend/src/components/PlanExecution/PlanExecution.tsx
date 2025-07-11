@@ -1,14 +1,11 @@
 import {
   Card,
-  CardAction,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
 import type { PlanStep } from '@/types';
-import { Badge } from '@/components/ui/badge';
-import { capitalize } from '@/lib/utils';
 import PlanStepCard from './PlanStepCard';
 import { usePlanStore } from '@/store/plan-store';
 
@@ -41,9 +38,6 @@ const PlanExecution = () => {
         <CardDescription className='text-muted-foreground text-sm'>
           Created: {new Date(currentPlan.createdAt).toLocaleString()}
         </CardDescription>
-        <CardAction>
-          <Badge>{capitalize(currentPlan.status)}</Badge>
-        </CardAction>
       </CardHeader>
 
       <CardContent className='flex flex-col gap-4'>

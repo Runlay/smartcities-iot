@@ -32,7 +32,7 @@ const DashboardPage = () => {
               <SensorCard
                 key={type}
                 sensorType={type}
-                sensorData={data ? { type, ...data } : undefined}
+                sensorData={data ? { ...data } : undefined}
               />
             );
           })}
@@ -48,7 +48,7 @@ const DashboardPage = () => {
               <ActuatorCard
                 key={type}
                 actuatorType={type}
-                actuatorData={{ type, ...data }}
+                actuatorData={{ ...data }}
               />
             );
           })}

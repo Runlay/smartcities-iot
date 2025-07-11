@@ -30,12 +30,12 @@ const SensorDataTable = () => {
         </TableHeader>
 
         <TableBody>
-          {sensorData.map((data) => {
+          {sensorData.map((data, index) => {
             const rawData = data as RawSensorData;
             const sensorData = rawData.sensorData as SensorData;
 
             return (
-              <TableRow key={sensorData.instanceId}>
+              <TableRow key={index}>
                 <TableCell className='text-muted-foreground'>
                   {sensorData.timestamp.toLocaleString()}
                 </TableCell>
