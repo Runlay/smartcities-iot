@@ -60,11 +60,11 @@ class SimulatedSensor:
         try:
             res = requests.get(url, timeout=2)
             data = res.json()
-            if "config" in data and self.type in data["config"]:
+            if data and "config" in data and self.type in data["config"]:
                 return data["config"][self.type]
         except Exception as e:
             print(f"Error fetching config for {self.type}: {e}")
-        return {}
+        return None
 
     def update_config(self, new_config):
         self.min_value = new_config.get("min", self.min_value)
@@ -78,7 +78,7 @@ class SimulatedSensor:
     def simulate(self):
         while True:
             latest_config = self.fetch_latest_config()
-            if latest_config:
+            if latest_config is not None:
                 self.update_config(latest_config)
 
             # Actuator ON: introduce lag before decrease
