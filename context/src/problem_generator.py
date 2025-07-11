@@ -81,22 +81,22 @@ class ProblemGenerator:
         # === ACTUATOR PREDICATES ===
 
         # AC
-        if state["actuators"]["ac"] and state["actuators"]["ac"]["isOn"] == "ON":
+        if state["actuators"]["ac"] and state["actuators"]["ac"]["state"] == "ON":
             init_predicates.append("    (ac-on)")
 
         # Ventilation
         if (
             state["actuators"]["ventilation"]
-            and state["actuators"]["ventilation"]["isOn"] == "ON"
+            and state["actuators"]["ventilation"]["state"] == "ON"
         ):
             init_predicates.append("    (ventilation-on)")
 
         # Light
-        if state["actuators"]["light"] and state["actuators"]["light"]["isOn"] == "ON":
+        if state["actuators"]["light"] and state["actuators"]["light"]["state"] == "ON":
             init_predicates.append("    (light-on)")
 
         # Alarm
-        if state["actuators"]["alarm"] and state["actuators"]["alarm"]["isOn"] == "ON":
+        if state["actuators"]["alarm"] and state["actuators"]["alarm"]["state"] == "ON":
             init_predicates.append("    (alarm-on)")
 
         return "\n".join(init_predicates)
@@ -113,22 +113,14 @@ class ProblemGenerator:
             temp_max = temp_config.get("max")
             temp_min = temp_config.get("min")
 
-            print(
-                f"🌡️  TEMP DEBUG: value={temp_value}, config={temp_config}, min={temp_min}, max={temp_max}"
-            )
-
             if temp_max and temp_value > temp_max:
                 goal_predicates.append("    (ac-on)")
-                print(f"🔥 AC ON: {temp_value} > {temp_max}")
             elif temp_min and temp_max and temp_min <= temp_value <= temp_max:
                 goal_predicates.append("    (not (ac-on))")
-                print(f"✅ AC OFF: {temp_value} in range [{temp_min}, {temp_max}]")
             elif temp_min and temp_value < temp_min:
                 goal_predicates.append("    (not (ac-on))")
-                print(f"🧊 AC OFF: {temp_value} < {temp_min}")
             else:
                 goal_predicates.append("    (not (ac-on))")
-                print(f"❓ AC OFF: fallback case for {temp_value}")
 
         # Humidity
         if state["sensors"]["humidity"]:
@@ -137,32 +129,23 @@ class ProblemGenerator:
             humidity_max = humidity_config.get("max")
             humidity_min = humidity_config.get("min")
 
-            print(
-                f"💧 HUMIDITY DEBUG: value={humidity_value}, config={humidity_config}, min={humidity_min}, max={humidity_max}"
-            )
-
             if humidity_max and humidity_value > humidity_max:
                 goal_predicates.append("    (ventilation-on)")
-                print(f"🌪️  VENT ON: {humidity_value} > {humidity_max}")
             elif (
                 humidity_min
                 and humidity_max
                 and humidity_min <= humidity_value <= humidity_max
             ):
                 goal_predicates.append("    (not (ventilation-on))")
-                print(
-                    f"✅ VENT OFF: {humidity_value} in range [{humidity_min}, {humidity_max}]"
-                )
             elif humidity_min and humidity_value < humidity_min:
                 goal_predicates.append("    (not (ventilation-on))")
-                print(f"🏜️  VENT OFF: {humidity_value} < {humidity_min}")
             else:
                 goal_predicates.append("    (not (ventilation-on))")
-                print(f"❓ VENT OFF: fallback case for {humidity_value}")
 
         # Motion
         if state["sensors"]["motion"]:
             motion_detected = state["sensors"]["motion"]["value"] == "1"
+
             if motion_detected:
                 goal_predicates.append("    (light-on)")
             else:
@@ -171,6 +154,7 @@ class ProblemGenerator:
         # Pressure (button)
         if state["sensors"]["pressure"]:
             button_pressed = state["sensors"]["pressure"]["value"] == "1"
+
             if button_pressed:
                 goal_predicates.append("    (alarm-on)")
             else:
