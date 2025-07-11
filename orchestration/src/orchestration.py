@@ -128,7 +128,6 @@ def on_message(client, userdata, msg):
                 # Build Plan object and send to frontend topic
                 plan = {
                     "id": f"plan-{timestamp}",
-                    "status": "completed",  # or set dynamically if needed
                     "steps": plan_steps,
                     "createdAt": timestamp,
                 }
