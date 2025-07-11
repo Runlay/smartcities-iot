@@ -92,8 +92,8 @@ services:
     ports:
       - '8000:8000'
 
-  context:
-    build: ./context
+  context-problem-generation:
+    build: ./context-problem-generation
     restart: always
     # depends_on:
     #   - rabbitmq
