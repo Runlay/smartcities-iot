@@ -3,9 +3,9 @@ import json
 import random
 import time
 from datetime import datetime
+from zoneinfo import ZoneInfo
 import requests
 from threading import Thread
-import secrets
 
 
 class SimulatedSensor:
@@ -17,9 +17,12 @@ class SimulatedSensor:
         self.load_env_config()
         self.value = random.uniform(self.min_value, self.max_value)
         self.above_range_counter = 0
-        self.instance_id = self.generate_instance_id()
         self.actuator_lag_counter = 0  # NEW: lag after actuator turns on
         self.actuator_lag_phase = 0  # 0: no lag, 1: rising, 2: stagnant, 3: decrease
+
+    def get_timestamp(self):
+        """Generate ISO 8601 timestamp in German timezone"""
+        return datetime.now(ZoneInfo("Europe/Berlin")).isoformat()
 
     def load_env_config(
         self,
@@ -139,19 +142,13 @@ class SimulatedSensor:
             self.publish()
             time.sleep(self.interval)
 
-    def generate_instance_id(self):
-        # Generate 12 random hex characters
-        hex_chars = "".join(secrets.choice("0123456789abcdef") for _ in range(12))
-        return f"0x{hex_chars}"
-
     def publish(self):
         payload = json.dumps(
             {
                 "type": self.type,
                 "value": f"{self.value:.2f}",
                 "unit": self.unit,
-                "timestamp": datetime.now().isoformat() + "Z",
-                "instanceId": self.instance_id,
+                "timestamp": self.get_timestamp(),
             }
         )
 

@@ -1,5 +1,6 @@
 import json
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 
 class SimulatedActuator:
@@ -7,6 +8,10 @@ class SimulatedActuator:
         self.type = type
         self.state = "OFF"
         self.mqtt_client = None
+
+    def get_timestamp(self):
+        """Generate ISO 8601 timestamp in German timezone"""
+        return datetime.now(ZoneInfo("Europe/Berlin")).isoformat()
 
     def set_mqtt_client(self, mqtt_client):
         self.mqtt_client = mqtt_client
@@ -25,8 +30,7 @@ class SimulatedActuator:
 
     def publish_state(self):
         topic = f"actuator/{self.type}/state"
-        timestamp = datetime.now().isoformat() + "Z"
-        payload = json.dumps({"state": self.state, "timestamp": timestamp})
+        payload = json.dumps({"state": self.state, "timestamp": self.get_timestamp()})
         print(
             f"Publishing state for {self.type} to topic: {topic} with payload: {payload}"
         )
