@@ -25,9 +25,7 @@ def connect_mqtt(topic, on_message):
     client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
     client.on_connect = on_connect
     client.username_pw_set("guest", "guest")
-    client.connect(
-        mqtt_server, mqtt_port
-    )  # Fixed: was "rabbitmq", should be mqtt_server
+    client.connect(mqtt_server, mqtt_port)
     client.subscribe(topic)
     client.on_message = on_message
     client.loop_start()

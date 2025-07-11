@@ -169,4 +169,4 @@ services:
     restart: always
     privileged: true
     environment:
-      - MQTT_SERVER=192.168.0.103
+      - MQTT_SERVER=rabbitmq
