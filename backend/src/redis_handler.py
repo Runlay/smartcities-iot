@@ -26,7 +26,8 @@ class RedisHandler:
         try:
             self._client.lpush(key, value)
         except Exception as e:
-            print("Error while pushing value to list.", e)
+            # print("Error while pushing value to list.", e)
+            pass
 
     def get_value(self, key):
         try:
