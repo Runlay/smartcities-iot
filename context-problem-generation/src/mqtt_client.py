@@ -6,19 +6,10 @@ import json
 from dotenv import load_dotenv
 import os
 import time
-import threading
-
 
 state_manager = EnvironmentStateManager()
 config_manager = EnvironmentConfigurationManager()
 problem_generator = ProblemGenerator()
-
-# Only keep plan generation debouncing
-last_plan_generation_time = 0
-PLAN_GENERATION_INTERVAL = 5  # seconds
-pending_plan_generation = False
-plan_generation_timer = None
-debounce_lock = threading.Lock()
 
 load_dotenv()
 
@@ -32,6 +23,9 @@ MQTT_ACTUATOR_STATE_TOPICS = os.getenv("MQTT_ACTUATOR_STATE_TOPICS", "actuator/+
 # Remove env/+ topic since it's not used anymore
 MQTT_TOPICS = [MQTT_SENSOR_TOPICS, MQTT_ACTUATOR_STATE_TOPICS]
 
+last_plan_time = 0
+PLAN_INTERVAL = 3
+
 
 def on_connect(client, userdata, flags, reason_code, properties):
     for topic in MQTT_TOPICS:
@@ -39,56 +33,19 @@ def on_connect(client, userdata, flags, reason_code, properties):
 
 
 def generate_plan():
-    """Generate and publish a PDDL problem immediately."""
-    global last_plan_generation_time
-
     current_state = state_manager.get_state()
     current_config = config_manager.fetch_latest_config()
 
     try:
         problem_data = problem_generator.generate_problem(current_state, current_config)
         client.publish("planner/problem", json.dumps(problem_data))
-        last_plan_generation_time = time.time()
     except Exception as e:
         print(f"✗ Failed to generate PDDL problem: {e}")
 
 
-def schedule_plan_generation():
-    """Schedule a plan generation with debouncing logic."""
-    global pending_plan_generation, plan_generation_timer, last_plan_generation_time
-
-    with debounce_lock:
-        current_time = time.time()
-        time_since_last_plan = current_time - last_plan_generation_time
-
-        if time_since_last_plan >= PLAN_GENERATION_INTERVAL:
-            generate_plan()
-            pending_plan_generation = False
-            return
-
-        if pending_plan_generation:
-            return
-
-        remaining_time = PLAN_GENERATION_INTERVAL - time_since_last_plan
-        pending_plan_generation = True
-
-        if plan_generation_timer:
-            plan_generation_timer.cancel()
-
-        plan_generation_timer = threading.Timer(remaining_time, _execute_pending_plan)
-        plan_generation_timer.start()
-
-
-def _execute_pending_plan():
-    """Execute the pending plan generation."""
-    global pending_plan_generation
-
-    with debounce_lock:
-        pending_plan_generation = False
-        generate_plan()
-
-
 def on_message(client, userdata, msg):
+    global last_plan_time
+
     try:
         payload = json.loads(msg.payload.decode())
         topic = msg.topic
@@ -100,8 +57,11 @@ def on_message(client, userdata, msg):
             actuator_type = topic.split("/")[1]
             state_manager.update_actuator_state(actuator_type, payload)
 
-        # Only trigger plan generation, no state publishing
-        schedule_plan_generation()
+        # Simple debouncing
+        current_time = time.time()
+        if current_time - last_plan_time >= PLAN_INTERVAL:
+            generate_plan()
+            last_plan_time = current_time
 
     except json.JSONDecodeError:
         pass  # Silently ignore invalid JSON
