@@ -9,10 +9,6 @@ const VITE_DEFAULT_HUMIDITY_MIN =
   import.meta.env.VITE_DEFAULT_HUMIDITY_MIN || '40';
 const VITE_DEFAULT_HUMIDITY_MAX =
   import.meta.env.VITE_DEFAULT_HUMIDITY_MAX || '50';
-const VITE_DEFAULT_MOTION_LIGHT_DURATION =
-  import.meta.env.VITE_DEFAULT_MOTION_LIGHT_DURATION || '30';
-const VITE_DEFAULT_PRESSURE_THRESHOLD =
-  import.meta.env.VITE_DEFAULT_PRESSURE_THRESHOLD || '100';
 
 const INITIAL_CONFIGURATION_STATE: EnvironmentConfiguration = {
   temperature: {
@@ -22,12 +18,6 @@ const INITIAL_CONFIGURATION_STATE: EnvironmentConfiguration = {
   humidity: {
     min: parseFloat(VITE_DEFAULT_HUMIDITY_MIN),
     max: parseFloat(VITE_DEFAULT_HUMIDITY_MAX),
-  },
-  motion: {
-    lightDuration: parseInt(VITE_DEFAULT_MOTION_LIGHT_DURATION),
-  },
-  pressure: {
-    threshold: parseInt(VITE_DEFAULT_PRESSURE_THRESHOLD),
   },
 };
 

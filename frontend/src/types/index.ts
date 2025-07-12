@@ -44,12 +44,6 @@ export type EnvironmentConfiguration = {
     min: number;
     max: number;
   };
-  motion: {
-    lightDuration: number; // in seconds
-  };
-  pressure: {
-    threshold: number;
-  };
 };
 
 export type PlanStep = {

@@ -59,14 +59,20 @@ def on_message(client, userdata, msg):
 def handle_light(client, command):
     """Handle light actuator commands"""
     try:
+        print(f"[LIGHT] Received command: {command}")
         if command == "ON":
+            print("[LIGHT] Turning LED ON")
             led.on()
         elif command == "OFF":
+            print("[LIGHT] Turning LED OFF")
             led.off()
+        else:
+            print(f"[LIGHT] Unknown command: {command}")
 
         # Publish state message
         state = {"state": command, "timestamp": get_timestamp()}
         state_message = json.dumps(state)
+        print(f"[LIGHT] Publishing state: {state_message}")
         client.publish("actuator/light/state", state_message)
 
     except Exception as e:
@@ -76,14 +82,20 @@ def handle_light(client, command):
 def handle_alarm(client, command):
     """Handle alarm actuator commands"""
     try:
+        print(f"[ALARM] Received command: {command}")
         if command == "ON":
+            print("[ALARM] Turning buzzer ON")
             bz.beep()
         elif command == "OFF":
+            print("[ALARM] Turning buzzer OFF")
             bz.off()
+        else:
+            print(f"[ALARM] Unknown command: {command}")
 
         # Publish state message
         state = {"state": command, "timestamp": get_timestamp()}
         state_message = json.dumps(state)
+        print(f"[ALARM] Publishing state: {state_message}")
         client.publish("actuator/alarm/state", state_message)
 
     except Exception as e:

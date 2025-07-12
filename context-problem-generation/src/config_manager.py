@@ -17,10 +17,6 @@ class EnvironmentConfigurationManager:
         DEFAULT_TEMPERATURE_MAX = float(os.getenv("DEFAULT_TEMPERATURE_MAX", 20.0))
         DEFAULT_HUMIDITY_MIN = float(os.getenv("DEFAULT_HUMIDITY_MIN", 40.0))
         DEFAULT_HUMIDITY_MAX = float(os.getenv("DEFAULT_HUMIDITY_MAX", 50.0))
-        DEFAULT_MOTION_LIGHT_DURATION = int(
-            os.getenv("DEFAULT_MOTION_LIGHT_DURATION", 30)
-        )
-        DEFAULT_PRESSURE_THRESHOLD = int(os.getenv("DEFAULT_PRESSURE_THRESHOLD", 100))
 
         default_config = {
             "temperature": {
@@ -30,12 +26,6 @@ class EnvironmentConfigurationManager:
             "humidity": {
                 "min": DEFAULT_HUMIDITY_MIN,
                 "max": DEFAULT_HUMIDITY_MAX,
-            },
-            "motion": {
-                "lightDuration": DEFAULT_MOTION_LIGHT_DURATION,
-            },
-            "pressure": {
-                "threshold": DEFAULT_PRESSURE_THRESHOLD,
             },
         }
 

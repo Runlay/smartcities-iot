@@ -6,15 +6,7 @@ import {
   CardFooter,
 } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import {
-  Clock,
-  Delete,
-  Droplets,
-  Gauge,
-  Save,
-  Thermometer,
-  CheckCircle,
-} from 'lucide-react';
+import { Delete, Droplets, Save, Thermometer, CheckCircle } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -23,7 +15,7 @@ import { useRef, useState, useEffect } from 'react';
 
 const ChangeSettings = () => {
   const { configuration, setConfiguration } = useConfigurationStore();
-  const { temperature, humidity, motion, pressure } = configuration;
+  const { temperature, humidity } = configuration;
 
   const [showSuccess, setShowSuccess] = useState(false);
 
@@ -41,8 +33,6 @@ const ChangeSettings = () => {
   const tempMaxRef = useRef<HTMLInputElement>(null);
   const humidityMinRef = useRef<HTMLInputElement>(null);
   const humidityMaxRef = useRef<HTMLInputElement>(null);
-  const lightDurationRef = useRef<HTMLInputElement>(null);
-  const pressureThresholdRef = useRef<HTMLInputElement>(null);
 
   const handleSaveConfiguration = () => {
     // Get values from refs, fallback to current config if empty
@@ -62,16 +52,6 @@ const ChangeSettings = () => {
         max: humidityMaxRef.current?.value
           ? parseFloat(humidityMaxRef.current.value)
           : humidity.max,
-      },
-      motion: {
-        lightDuration: lightDurationRef.current?.value
-          ? parseFloat(lightDurationRef.current.value)
-          : motion.lightDuration,
-      },
-      pressure: {
-        threshold: pressureThresholdRef.current?.value
-          ? parseFloat(pressureThresholdRef.current.value)
-          : pressure.threshold,
       },
     };
 
@@ -105,8 +85,6 @@ const ChangeSettings = () => {
     if (tempMaxRef.current) tempMaxRef.current.value = '';
     if (humidityMinRef.current) humidityMinRef.current.value = '';
     if (humidityMaxRef.current) humidityMaxRef.current.value = '';
-    if (lightDurationRef.current) lightDurationRef.current.value = '';
-    if (pressureThresholdRef.current) pressureThresholdRef.current.value = '';
   };
 
   return (
@@ -182,44 +160,6 @@ const ChangeSettings = () => {
                   ref={humidityMaxRef}
                 />
               </div>
-            </div>
-          </div>
-
-          <div>
-            <div className='mb-4 flex items-center gap-2'>
-              <Clock className='text-muted-foreground h-5 w-5' />
-              <h3 className='font-medium'>Motion Light Duration</h3>
-            </div>
-
-            <div className='flex max-w-2xs flex-col gap-2'>
-              <Label htmlFor='duration'>Duration (seconds)</Label>
-              <Input
-                id='duration'
-                type='number'
-                min={0}
-                step={1}
-                placeholder={motion.lightDuration.toString()}
-                ref={lightDurationRef}
-              />
-            </div>
-          </div>
-
-          <div>
-            <div className='mb-4 flex items-center gap-2'>
-              <Gauge className='text-muted-foreground h-5 w-5' />
-              <h3 className='font-medium'>Pressure Threshold</h3>
-            </div>
-
-            <div className='flex max-w-2xs flex-col gap-2'>
-              <Label htmlFor='threshold'>Threshold (kg)</Label>
-              <Input
-                id='threshold'
-                type='number'
-                min={0}
-                step={1}
-                placeholder={pressure.threshold.toString()}
-                ref={pressureThresholdRef}
-              />
             </div>
           </div>
         </form>
