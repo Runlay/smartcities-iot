@@ -26,11 +26,8 @@ def get_timestamp():
 
 
 def on_connect(client, userdata, flags, reason_code, properties):
-    print(f"Connected with result code {reason_code}")
-
     for topic in MQTT_TOPICS:
         client.subscribe(topic)
-    print(f"Subscribed to topics: {MQTT_TOPICS}")
 
 
 def on_message(client, userdata, msg):
@@ -39,7 +36,6 @@ def on_message(client, userdata, msg):
         topic = msg.topic
 
         if topic.startswith("planner"):
-            print(f"{topic} received: {payload}")
             # save the problem to a file
             file = PDDL_OUTPUT_PATH + "/problem.pddl"
             with open(file, "w") as f:
@@ -52,7 +48,6 @@ def on_message(client, userdata, msg):
                 subprocess.run(
                     ["cp", "/orchestration/src/domain.pddl", domain_file], check=True
                 )
-                print(f"Copied domain.pddl to {domain_file}")
 
             plan = run_fd_docker()
             timestamp = get_timestamp()
@@ -84,9 +79,6 @@ def on_message(client, userdata, msg):
                             client.publish(
                                 "actuator/light/command", json.dumps(command_payload)
                             )
-                            print(
-                                f"Published command to actuator/light/command: {command_payload}"
-                            )
 
                         case "turn-ventilation":
                             command_payload = {
@@ -97,9 +89,6 @@ def on_message(client, userdata, msg):
                                 "actuator/ventilation/command",
                                 json.dumps(command_payload),
                             )
-                            print(
-                                f"Published command to actuator/ventilation/command: {command_payload}"
-                            )
 
                         case "turn-ac":
                             command_payload = {
@@ -108,9 +97,6 @@ def on_message(client, userdata, msg):
                             }
                             client.publish(
                                 "actuator/ac/command", json.dumps(command_payload)
-                            )
-                            print(
-                                f"Published command to actuator/ac/command: {command_payload}"
                             )
 
                         case "turn-alarm":
@@ -121,9 +107,6 @@ def on_message(client, userdata, msg):
                             client.publish(
                                 "actuator/alarm/command", json.dumps(command_payload)
                             )
-                            print(
-                                f"Published command to actuator/alarm/command: {command_payload}"
-                            )
 
                 # Build Plan object and send to frontend topic
                 plan = {
@@ -132,7 +115,6 @@ def on_message(client, userdata, msg):
                     "createdAt": timestamp,
                 }
                 client.publish("planner/plan", json.dumps(plan))
-                print(f"Published plan to planner/plan: {plan}")
 
     except json.JSONDecodeError:
         print("Failed to decode JSON payload or running the planner.")

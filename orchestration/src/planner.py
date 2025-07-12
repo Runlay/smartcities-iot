@@ -36,8 +36,6 @@ def run_fd_docker():
     try:
         result = subprocess.run(cmd, check=True, text=True, capture_output=True)
 
-        print(f"=== PLANNER RAW RESULT ===\n{result}")
-
         # Extract the plan from stdout
         plan_lines = []
         lines = result.stdout.splitlines()
@@ -62,7 +60,6 @@ def run_fd_docker():
                 ):
                     break
 
-        print("\n".join(plan_lines))
         return plan_lines
     except subprocess.CalledProcessError as e:
         print("Fehler beim Ausführen von Fast Downward:")
