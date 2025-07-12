@@ -18,8 +18,6 @@ def start_mqtt_worker():
     mqttc.username_pw_set("guest", "guest")
     mqttc.connect("rabbitmq", 1883, 60)
 
-    print("Connected to MQTT broker")
-
     # Subscribe to multiple topics
     topics = [
         ("sensor/temperature", 0),
@@ -39,13 +37,10 @@ def start_mqtt_worker():
         }
         redis_key = topic_map.get(message.topic)
         if redis_key:
-            print(f"Received message on {message.topic}: {message.payload.decode()}")
             redis_client.lpush(redis_key, message.payload.decode())
         elif message.topic == "env/config":
-            print(f"Received environment config update: {message.payload.decode()}")
             config = json.loads(message.payload.decode())
             postgres_client.create_config(config)
-            print("New environment config created in PostgreSQL")
         else:
             print(
                 f"Received message on unknown topic {message.topic}: {message.payload.decode()}"
