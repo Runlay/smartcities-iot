@@ -29,10 +29,8 @@ def get_timestamp():
 def on_connect(client, userdata, flags, reason_code, properties):
     """Subscribe to all actuator command topics when connected"""
     if reason_code == 0:
-        print("Connected to MQTT broker")
         for topic in MQTT_ACTUATOR_COMMAND_TOPICS:
             client.subscribe(topic)
-            print(f"Subscribed to: {topic}")
     else:
         print(f"Failed to connect to MQTT broker, return code: {reason_code}")
 
@@ -72,7 +70,6 @@ def handle_light(client, command):
         # Publish state message
         state = {"state": command, "timestamp": get_timestamp()}
         state_message = json.dumps(state)
-        print(f"[LIGHT] Publishing state: {state_message}")
         client.publish("actuator/light/state", state_message)
 
     except Exception as e:
@@ -95,7 +92,6 @@ def handle_alarm(client, command):
         # Publish state message
         state = {"state": command, "timestamp": get_timestamp()}
         state_message = json.dumps(state)
-        print(f"[ALARM] Publishing state: {state_message}")
         client.publish("actuator/alarm/state", state_message)
 
     except Exception as e:
