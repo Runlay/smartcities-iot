@@ -26,17 +26,13 @@ class MqttClient:
         self.client.connect(MQTT_BROKER_HOST, MQTT_BROKER_PORT, 5)
 
     def subscribe(self, topic):
-        print(f"Subscribing to topic: {topic}")
         self.client.subscribe(topic)
 
     def publish(self, topic, payload):
-        print(f"Publishing to topic: {topic} with payload: {payload}")
         self.client.publish(topic, payload)
 
     def set_on_message(self, on_message):
-        print("Setting on_message callback")
         self.client.on_message = on_message
 
     def loop_forever(self):
-        print("Starting MQTT client loop")
         self.client.loop_forever()

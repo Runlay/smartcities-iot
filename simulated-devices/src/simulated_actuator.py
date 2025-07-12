@@ -31,7 +31,4 @@ class SimulatedActuator:
     def publish_state(self):
         topic = f"actuator/{self.type}/state"
         payload = json.dumps({"state": self.state, "timestamp": self.get_timestamp()})
-        print(
-            f"Publishing state for {self.type} to topic: {topic} with payload: {payload}"
-        )
         self.mqtt_client.publish(topic, payload)
