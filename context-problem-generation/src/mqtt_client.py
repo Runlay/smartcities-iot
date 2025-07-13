@@ -24,7 +24,7 @@ MQTT_ACTUATOR_STATE_TOPICS = os.getenv("MQTT_ACTUATOR_STATE_TOPICS", "actuator/+
 MQTT_TOPICS = [MQTT_SENSOR_TOPICS, MQTT_ACTUATOR_STATE_TOPICS]
 
 last_plan_time = 0
-PLAN_INTERVAL = 3
+PLAN_INTERVAL = 5
 
 
 def on_connect(client, userdata, flags, reason_code, properties):
